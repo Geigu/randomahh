@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geigi.net</title>
+     <link rel="icon" href="icon3.png">
+    <style>
+        /* Base Styles */
+        :root {
+            --bg-color: #1a0a0a;
+            --text-color: #ffeaea;
+            --accent-color: #ff3b3b;
+            --card-bg: #2a1313;
+            --hover-color: #ff5e5e;
+            --yellow: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header/Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: rgba(26, 10, 10, 0.96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1.5px solid var(--accent-color);
+        }
+
+        .home-btn {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.6em;
+        }
+
+        .home-btn:hover {
+            background-color: rgba(255, 59, 59, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+        }
+
+        .nav-mobile {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-mobile {
+                display: block;
+                position: relative;
+            }
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--card-bg);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 1rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-menu.show {
+            display: flex;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 59, 59, 0.13);
+            color: var(--accent-color);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 7rem 2rem 3rem;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .profile-pic-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 1rem;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--accent-color);
+            box-shadow: 0 0 20px rgba(255, 59, 59, 0.25);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-pic-container:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .name-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .name {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            padding-right: 40px;
+        }
+
+        .name::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        .splash-container {
+            position: absolute;
+            top: -5px;
+            right: 0;
+            z-index: 2;
+        }
+
+        .splash-text {
+            color: var(--yellow);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 0.9rem;
+            animation: float 3s ease-in-out infinite;
+            transform: rotate(15deg);
+            transform-origin: left center;
+            white-space: nowrap;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: rotate(15deg) translateY(0);
+            }
+            50% {
+                transform: rotate(15deg) translateY(-5px);
+            }
+        }
+
+        /* About Section */
+        .about-section, .hobbies-section, .experience-section {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(255, 59, 59, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 59, 59, 0.13);
+        }
+
+        .about-section:hover, .hobbies-section:hover, .experience-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 59, 59, 0.13);
+        }
+
+        .section-title {
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        /* Hobbies Section - Vertical List */
+        .hobbies-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .hobby-item {
+            background-color: rgba(255, 59, 59, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+            transition: all 0.3s ease;
+            margin-bottom: 0.8rem;
+            word-break: break-word;
+        }
+
+        .hobby-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .hobby-item:hover {
+            background-color: rgba(255, 59, 59, 0.13);
+            transform: translateX(5px);
+        }
+
+        /* Experience Section */
+        .experience-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .experience-item {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255, 59, 59, 0.13);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .experience-item:last-child {
+            border-bottom: none;
+        }
+
+        .experience-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 2rem;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+        }
+
+        .experience-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .experience-date {
+            font-size: 0.9rem;
+            color: #eaa;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Glow Effects */
+        .glow {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 59, 59, 0.13) 0%, rgba(255, 59, 59, 0) 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glow-1 {
+            top: 20%;
+            left: 10%;
+            animation: float-glow 8s ease-in-out infinite;
+        }
+
+        .glow-2 {
+            bottom: 15%;
+            right: 10%;
+            animation: float-glow 10s ease-in-out infinite 2s;
+        }
+
+        @keyframes float-glow {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            25% {
+                transform: translate(20px, 20px);
+            }
+            50% {
+                transform: translate(0, 40px);
+            }
+            75% {
+                transform: translate(-20px, 20px);
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #a77;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .name {
+                font-size: 2rem;
+                padding-right: 30px;
+            }
+            
+            main {
+                padding: 6rem 1.5rem 2rem;
+            }
+            
+            .profile-pic-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .splash-text {
+                font-size: 0.7rem;
+            }
+        }
+
+        .social-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 0.5em 1em;
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px #0003;
+            transition: background 0.18s, color 0.18s;
+            text-decoration: none;
+        }
+
+        .social-card:hover {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        @media (max-width: 900px) {
+            .socials-desktop {
+                display: none !important;
+            }
+            .socials-mobile {
+                display: flex !important;
+            }
+        }
+        @media (min-width: 901px) {
+    .socials-mobile {
+        display: none;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Glow Effects -->
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <!-- Header -->
+    <header>
+        <div style="display:flex;align-items:center;">
+            <a href="#" class="home-btn" style="display:flex;align-items:center;gap:0.6em;margin-right:0.7em;" onclick="navigateTo('index')">
+                <img src="Image (54).jpg" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 1px 6px #0003;">
+                Home
+            </a>
+            <div class="sidebar-social socials-desktop" style="display:flex;gap:0.7em;align-items:center;">
+                <a class="social-card" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">
+                    <img src="discord.png" alt="Discord" style="width:24px;height:24px;object-fit:contain;">
+                    @geigi
+                </a>
+                <a class="social-card" href="https://oguser.com/geigi" target="_blank" rel="noopener noreferrer">
+                    <img src="Oguserslogo.png" alt="OGU" style="width:24px;height:24px;object-fit:contain;">
+                    /geigi
+                </a>
+            </div>
+        </div>
+        <!-- Desktop Navigation -->
+        <nav class="nav-desktop">
+            <a href="#" class="nav-link" onclick="navigateTo('buying')">Buying Accounts</a>
+            <a href="#" class="nav-link" onclick="navigateTo('2fa')">2FA Generator</a>
+            <a href="#" class="nav-link" onclick="navigateTo('verify')">Verification</a>
+           
+            <a href="https://dcserver.dev/" class="nav-link" target="_blank">Discord Server Setups</a>
+        </nav>
+        <!-- Mobile Navigation -->
+        <div class="nav-mobile">
+            <button class="nav-btn" onclick="toggleMobileMenu()">☰</button>
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="#" class="nav-link" onclick="navigateTo('buying')">Buying Accounts</a>
+                <a href="#" class="nav-link" onclick="navigateTo('2fa')">2FA Generator</a>
+                <a href="#" class="nav-link" onclick="navigateTo('verify')">Verification</a>
+               
+                <a href="https://dcserver.dev/" class="nav-link" target="_blank">Discord Server Setups</a>
+                <div class="sidebar-social socials-mobile" style="display:flex;gap:0.7em;align-items:center;justify-content:center;margin-top:1em;">
+                    <a class="social-card" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">
+                        <img src="discord.png" alt="Discord" style="width:24px;height:24px;object-fit:contain;">
+                        @geigi
+                    </a>
+                    <a class="social-card" href="https://oguser.com/geigi" target="_blank" rel="noopener noreferrer">
+                        <img src="Oguserslogo.png" alt="OGU" style="width:24px;height:24px;object-fit:contain;">
+                        /geigi
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Geigi.net Title -->
+        <h1 style="color:var(--accent-color);font-size:2.5rem;font-weight:bold;text-align:center;margin-bottom:0.5em;letter-spacing:1px;">
+            Geigi.net
+        </h1>
+        <!-- Flash/Splash Texts -->
+        <div id="splashText" style="text-align:center;color:var(--yellow);font-size:1.25rem;font-weight:bold;margin-bottom:1.2em;min-height:2em;letter-spacing:0.5px;">
+            <!-- Wird per JS gesetzt -->
+        </div>
+
+        <!-- About Section -->
+        <section class="about-section">
+            <h2 class="section-title">About Me</h2>
+            <p>
+                <b>Introduction</b><br>
+                Hi, I’m Geigi – welcome to my personal site! I’ve been part of the OG Community for over 4 years, gaining experience, making connections, and contributing to projects I’m passionate about. Thanks for stopping by!<br><br>
+                <b>What I'm Currently Buying:</b><br>
+                I’m actively buying certain types of accounts. Check the Current Buys section to see what I’m interested in right now (updated regularly.)<br><br>
+                <b>Need to Verify Me?</b><br>
+                Use the Verify section to confirm my official Discord account, so you can make sure you’re dealing with the real Geigi! You can also use the 2FA Generator to receive TOTP Codes.
+            </p>
+        </section>
+
+        
+
+        
+    
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('show');
+        }
+        function navigateTo(page) {
+            // Passe das Routing ggf. an deine Seitenstruktur an
+            window.location.href = page + ".html";
+        }
+
+       
+        const splashTexts = [
+            "Welcome to Geigi.net!",
+            "in the OG Community since 2021.",
+           
+            "Need help? Contact me anytime.",
+            "Stay safe – always verify!",
+            "Selling accounts? Check my current buys!",
+            "Looking for 2FA codes? Use my generator!",
+            "Interested in Discord server setups? I got you!",
+ "Hedgehog Enthusiast 🦔",
+    
+        ];
+
+        // Alle 3 Sekunden wechselt der Text
+        function setRandomSplashText() {
+            const splashElement = document.getElementById('splashText');
+            let idx = 0;
+            splashElement.textContent = splashTexts[idx];
+            setInterval(() => {
+                idx = (idx + 1) % splashTexts.length;
+                splashElement.textContent = splashTexts[idx];
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', setRandomSplashText);
+    </script>
+</body>
+</html>
