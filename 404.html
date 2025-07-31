@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404 - Page Not Found</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a2a4d 0%, #3b7bff 100%);
+            color: #eaf3ff;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(16,26,43,0.95);
+            border-radius: 22px;
+            box-shadow: 0 6px 32px #0008;
+            padding: 2.5em 2em;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3em;
+            color: #fff;
+            margin-bottom: 0.3em;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 12px #3b7bff88;
+        }
+        .desc {
+            font-size: 1.2em;
+            margin-bottom: 1.2em;
+            color: #eaf3ff;
+        }
+        .home-btn {
+            background: linear-gradient(90deg, #3b7bff 60%, #5e9cff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7em 1.4em;
+            font-size: 1.05em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1em;
+            box-shadow: 0 2px 12px #0003;
+            transition: background 0.18s, color 0.18s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .home-btn:hover {
+            background: linear-gradient(90deg, #5e9cff 60%, #3b7bff 100%);
+        }
+        .emoji {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">🚫</div>
+        <h1>404</h1>
+        <div class="desc">
+            Oops! The page you requested could not be found.<br>
+            Maybe the link is wrong or the page doesn't exist.<br>
+            <br>
+            <span style="opacity:0.7;">
+                If you think this is an error, contact 
+                <a href="https://discord.com/users/463953200559685632" style="color:#fff;text-decoration:underline;font-weight:600;">me</a>
+                please
+            </span>
+        </div>
+        <a href="https://geigi.net/" class="home-btn">Go to Home</a>
+    </div>
+</body>
+</html>
