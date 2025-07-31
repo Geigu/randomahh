@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Avatar Cropper & Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a2a4d 0%, #3b7bff 100%);
+            color: #eaf3ff;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background: rgba(16,26,43,0.97);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px #0007;
+            padding: 2em;
+            max-width: 420px;
+            width: 100%;
+            margin-top: 2em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 0.4em;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        p {
+            text-align: center;
+            font-size: 0.95em;
+            line-height: 1.5em;
+            margin-bottom: 1.2em;
+            color: #eaf3ff;
+        }
+        .controls {
+            margin: 1em 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+            width: 100%;
+            align-items: center;
+        }
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            width: 100%;
+            justify-content: center;
+        }
+        .slider-group input[type="range"] {
+            width: 160px;
+        }
+        .canvas-wrap {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            margin-bottom: 1em;
+        }
+        #avatar-canvas {
+            border-radius: 50%;
+            background: #162a4d;
+            box-shadow: 0 2px 12px #0003;
+            width: 260px;
+            height: 260px;
+            display: block;
+        }
+        .preview {
+            margin-top: 1em;
+            text-align: center;
+        }
+        .preview img {
+            border-radius: 50%;
+            box-shadow: 0 2px 12px #0003;
+            width: 120px;
+            height: 120px;
+            background: #162a4d;
+        }
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 1em 0 0.7em 0;
+            color: #eaf3ff;
+            font-size: 1em;
+            opacity: 0.7;
+        }
+        .footer a {
+            color: #eaf3ff;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        .btn {
+            background: linear-gradient(90deg, #3b7bff 60%, #5e9cff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7em 1.4em;
+            font-size: 1.05em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #0003;
+            transition: background 0.18s, color 0.18s;
+            text-decoration: none;
+            margin-top: 0.7em;
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #5e9cff 60%, #3b7bff 100%);
+        }
+        .arrow-btns {
+            display: flex;
+            gap: 0.5em;
+            justify-content: center;
+        }
+        .arrow-btns button {
+            background: #162a4d;
+            color: #eaf3ff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.4em 0.7em;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0003;
+            transition: background 0.18s;
+        }
+        .arrow-btns button:hover {
+            background: #3b7bff;
+        }
+        input[type="file"] {
+            margin-bottom: 0.7em;
+            color: #eaf3ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Avatar Cropper & Editor</h1>
+        <p>
+            Upload an image, adjust its size and position, and download your circular avatar as a PNG.<br>
+            Perfect for profile pictures on Discord, GitHub, forums, or any social media platform.<br>
+            You can move the image with your mouse, zoom in and out with the slider, or fine-tune using the arrow buttons.
+        </p>
+        <input type="file" id="upload" accept="image/png, image/jpeg">
+
+        <div class="canvas-wrap">
+            <canvas id="avatar-canvas" width="260" height="260"></canvas>
+        </div>
+        <div class="controls">
+            <div class="slider-group">
+                <label for="zoom">Zoom:</label>
+                <input type="range" id="zoom" min="0.3" max="3" step="0.01" value="1">
+            </div>
+            <div class="arrow-btns">
+                <button onclick="move(-10,0)" title="Left">&#8592;</button>
+                <button onclick="move(10,0)" title="Right">&#8594;</button>
+                <button onclick="move(0,-10)" title="Up">&#8593;</button>
+                <button onclick="move(0,10)" title="Down">&#8595;</button>
+            </div>
+            <button class="btn" onclick="downloadAvatar()">Download PNG</button>
+        </div>
+        <div class="preview">
+            <div>Preview:</div>
+            <img id="avatar-preview" src="" alt="Avatar Preview">
+        </div>
+    </div>
+    <div class="footer">
+        Made by: <a href="https://geigi.net" target="_blank">Geigi.net</a>
+    </div>
+
+    <script>
+        let img = null;
+        let imgX = 0, imgY = 0, zoom = 1;
+        const canvas = document.getElementById('avatar-canvas');
+        const ctx = canvas.getContext('2d');
+        const preview = document.getElementById('avatar-preview');
+
+        function drawAvatar() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(130, 130, 130, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx.clip();
+            if (img) {
+                const w = img.width * zoom;
+                const h = img.height * zoom;
+                ctx.drawImage(img, imgX, imgY, w, h);
+            }
+            ctx.restore();
+            preview.src = canvas.toDataURL('image/png');
+        }
+
+        document.getElementById('upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                img = new Image();
+                img.onload = function() {
+                    const scaleX = canvas.width / img.width;
+                    const scaleY = canvas.height / img.height;
+                    zoom = Math.min(scaleX, scaleY);
+                    document.getElementById('zoom').value = zoom.toFixed(2);
+                    const displayWidth = img.width * zoom;
+                    const displayHeight = img.height * zoom;
+                    imgX = (canvas.width - displayWidth) / 2;
+                    imgY = (canvas.height - displayHeight) / 2;
+                    drawAvatar();
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('zoom').addEventListener('input', function() {
+            zoom = parseFloat(this.value);
+            drawAvatar();
+        });
+
+        function move(dx, dy) {
+            imgX += dx;
+            imgY += dy;
+            drawAvatar();
+        }
+
+        let dragging = false, lastX = 0, lastY = 0;
+        canvas.addEventListener('mousedown', function(e) {
+            dragging = true;
+            lastX = e.offsetX;
+            lastY = e.offsetY;
+        });
+        canvas.addEventListener('mouseup', () => dragging = false);
+        canvas.addEventListener('mouseleave', () => dragging = false);
+        canvas.addEventListener('mousemove', function(e) {
+            if (!dragging || !img) return;
+            imgX += e.offsetX - lastX;
+            imgY += e.offsetY - lastY;
+            lastX = e.offsetX;
+            lastY = e.offsetY;
+            drawAvatar();
+        });
+
+        function downloadAvatar() {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'avatar.png';
+            link.click();
+        }
+    </script>
+</body>
+</html>
