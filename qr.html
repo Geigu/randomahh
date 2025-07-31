@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR-Code Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            background: #101a2b;
+            color: #eaf3ff;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: linear-gradient(135deg, #1a2a4d 0%, #3b7bff 100%);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px #0007;
+            padding: 2em 2em 2em 2em;
+            max-width: 420px;
+            width: 100%;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 0.5em;
+            font-size: 1.6em;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .desc {
+            font-size: 1em;
+            margin-bottom: 1.2em;
+            color: #eaf3ff;
+            background: rgba(16,26,43,0.25);
+            border-radius: 10px;
+            padding: 0.7em 1em;
+            text-align: center;
+        }
+        .select-group {
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-size: 1em;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.5em;
+            border-radius: 7px;
+            border: none;
+            margin-bottom: 1em;
+            font-size: 1em;
+            background: #162a4d;
+            color: #eaf3ff;
+        }
+        textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .generate-btn, .download-btn {
+            background: linear-gradient(90deg, #3b7bff 60%, #5e9cff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7em 1.4em;
+            font-size: 1.05em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1em;
+            box-shadow: 0 2px 12px #0003;
+            transition: background 0.18s, color 0.18s;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+        }
+        .download-btn {
+            margin-top: 0.5em;
+            background: linear-gradient(90deg, #5e9cff 60%, #3b7bff 100%);
+        }
+        .generate-btn:hover, .download-btn:hover {
+            background: linear-gradient(90deg, #5e9cff 60%, #3b7bff 100%);
+        }
+        #qrcode {
+            margin: 1.5em auto 0 auto;
+            display: flex;
+            justify-content: center;
+            background: #fff;
+            padding: 1em;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #0003;
+            width: fit-content;
+        }
+        .wifi-row {
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            margin-bottom: 1em;
+        }
+        .wifi-row label {
+            margin-bottom: 0;
+            flex: 1;
+        }
+        .wifi-row input[type="checkbox"] {
+            width: auto;
+            margin-bottom: 0;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 1em 0 0.7em 0;
+            color: #eaf3ff;
+            font-size: 1em;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body style="display:flex;flex-direction:column;min-height:100vh;margin:0;">
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+        <div class="container">
+            <h1>QR-Code Generator</h1>
+            <div class="desc">
+                Generate QR codes instantly and securely – no registration, no tracking.<br>
+                All QR codes are created directly in your browser and never leave your device.<br>
+                Choose your content type, paste your info, and download your QR code as PNG or PDF.<br>
+                Powered by <a href="https://github.com/davidshimjs/qrcodejs" target="_blank" style="color:#fff;text-decoration:underline;">QRCode.js</a>.
+            </div>
+            <div class="select-group">
+                <label for="type">Select Content Type</label>
+                <select id="type" onchange="showFields()">
+                    <option value="plain">Plain Text</option>
+                    <option value="url">URL</option>
+                    <option value="email">Email</option>
+                    <option value="wifi">Wi-Fi</option>
+                    <option value="vcard">Contact (vCard)</option>
+                </select>
+            </div>
+            <form id="qr-form" onsubmit="event.preventDefault(); generateQR();">
+                <div id="fields"></div>
+                <button class="generate-btn" type="submit">Generate QR-Code</button>
+            </form>
+            <div id="download-buttons" style="display:none;">
+                <button class="download-btn" onclick="downloadPNG()">Download as PNG</button>
+                <button class="download-btn" onclick="downloadPDF()">Download as PDF</button>
+            </div>
+            <div id="qrcode"></div>
+        </div>
+    </div>
+    <footer>
+        <a href="https://geigi.net" target="_blank" style="color:#eaf3ff;text-decoration:underline;font-weight:700;">Geigi.net</a>
+    </footer>
+    <script>
+        function showFields() {
+            const type = document.getElementById('type').value;
+            const fields = document.getElementById('fields');
+            fields.innerHTML = '';
+            if (type === 'plain') {
+                fields.innerHTML = `
+                    <label for="plaintext">Text:</label>
+                    <textarea id="plaintext" placeholder="Enter your text here"></textarea>
+                `;
+            } else if (type === 'url') {
+                fields.innerHTML = `
+                    <label for="url">URL:</label>
+                    <input type="url" id="url" placeholder="https://example.com">
+                `;
+            } else if (type === 'email') {
+                fields.innerHTML = `
+                    <label for="email">Email address:</label>
+                    <input type="email" id="email" placeholder="example@email.com">
+                    <label for="subject">Subject (optional):</label>
+                    <input type="text" id="subject" placeholder="Subject">
+                    <label for="body">Body (optional):</label>
+                    <textarea id="body" placeholder="Message"></textarea>
+                `;
+            } else if (type === 'wifi') {
+                fields.innerHTML = `
+                    <label for="ssid">Wi-Fi SSID:</label>
+                    <input type="text" id="ssid" placeholder="Network name">
+                    <label for="wifipass">Wi-Fi Password:</label>
+                    <input type="text" id="wifipass" placeholder="Password">
+                    <label for="encryption">Encryption:</label>
+                    <select id="encryption">
+                        <option value="WPA">WPA/WPA2</option>
+                        <option value="WEP">WEP</option>
+                        <option value="">None</option>
+                    </select>
+                    <div class="wifi-row">
+                        <label for="hidden" style="margin-bottom:0;">Hidden Network</label>
+                        <input type="checkbox" id="hidden">
+                    </div>
+                `;
+            } else if (type === 'vcard') {
+                fields.innerHTML = `
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" placeholder="John Doe">
+                    <label for="org">Organization:</label>
+                    <input type="text" id="org" placeholder="Company">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" placeholder="+49123456789">
+                    <label for="emailv">Email:</label>
+                    <input type="email" id="emailv" placeholder="john@doe.com">
+                `;
+            }
+        }
+
+        function generateQR() {
+            const type = document.getElementById('type').value;
+            let qrData = '';
+            if (type === 'plain') {
+                qrData = document.getElementById('plaintext').value || '';
+            } else if (type === 'url') {
+                qrData = document.getElementById('url').value || '';
+            } else if (type === 'email') {
+                const email = document.getElementById('email').value || '';
+                const subject = document.getElementById('subject').value || '';
+                const body = document.getElementById('body').value || '';
+                qrData = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            } else if (type === 'wifi') {
+                const ssid = document.getElementById('ssid').value || '';
+                const pass = document.getElementById('wifipass').value || '';
+                const enc = document.getElementById('encryption').value || '';
+                const hidden = document.getElementById('hidden').checked ? 'true' : 'false';
+                qrData = `WIFI:T:${enc};S:${ssid};P:${pass};H:${hidden};;`;
+            } else if (type === 'vcard') {
+                const name = document.getElementById('name').value || '';
+                const org = document.getElementById('org').value || '';
+                const phone = document.getElementById('phone').value || '';
+                const emailv = document.getElementById('emailv').value || '';
+                qrData =
+`BEGIN:VCARD
+VERSION:3.0
+FN:${name}
+ORG:${org}
+TEL:${phone}
+EMAIL:${emailv}
+END:VCARD`;
+            }
+            const qrDiv = document.getElementById('qrcode');
+            qrDiv.innerHTML = '';
+            const downloadDiv = document.getElementById('download-buttons');
+            if (qrData.trim() === '') {
+                qrDiv.innerHTML = '<span style="color:#ff3b3b;">Please enter content to generate QR code.</span>';
+                downloadDiv.style.display = 'none';
+                return;
+            }
+            new QRCode(qrDiv, {
+                text: qrData,
+                width: 220,
+                height: 220,
+                colorDark : "#101a2b",
+                colorLight : "#fff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+            downloadDiv.style.display = 'block';
+        }
+
+        function downloadPNG() {
+            const qrCanvas = document.querySelector('#qrcode canvas');
+            if (!qrCanvas) return;
+            const link = document.createElement('a');
+            link.href = qrCanvas.toDataURL('image/png');
+            link.download = 'qrcode.png';
+            link.click();
+        }
+
+        function downloadPDF() {
+            const qrCanvas = document.querySelector('#qrcode canvas');
+            if (!qrCanvas) return;
+            const imgData = qrCanvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            pdf.addImage(imgData, 'PNG', 30, 30, 150, 150);
+            pdf.save('qrcode.pdf');
+        }
+
+        // Show default fields on load
+        window.onload = function() {
+            showFields();
+            document.getElementById('type').value = 'plain';
+            setTimeout(() => {
+                const pt = document.getElementById('plaintext');
+                if (pt) pt.focus();
+            }, 100);
+            document.getElementById('download-buttons').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
