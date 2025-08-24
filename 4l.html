@@ -25,23 +25,19 @@
 </head>
 <body class="bg-[#05060a] text-white min-h-screen flex flex-col items-center relative overflow-x-hidden">
 
- 
   <div class="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]">
     <div class="absolute -top-40 -left-40 h-[40rem] w-[40rem] rounded-full bg-gradient-to-br from-teal-500/30 via-cyan-500/20 to-fuchsia-500/10 blur-3xl"></div>
     <div class="absolute -bottom-48 -right-64 h-[44rem] w-[44rem] rounded-full bg-gradient-to-tr from-fuchsia-600/20 via-violet-500/20 to-sky-400/20 blur-3xl"></div>
   </div>
 
- 
   <div class="relative z-10 w-full max-w-6xl px-4 py-10">
 
- 
     <header class="text-center mb-10 max-w-2xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-teal-300 drop-shadow-[0_0_20px_rgba(99,102,241,0.25)]">
         Discord 4L's List
       </h1>
     </header>
 
- 
     <div class="mb-12 p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 shadow-[0_0_30px_rgba(34,211,238,0.15)] max-w-2xl mx-auto text-center fade-in">
       <h2 class="text-xl font-semibold mb-4 text-cyan-300">Description:</h2>
       <ul class="space-y-2 text-white/80 text-sm md:text-base">
@@ -51,7 +47,6 @@
       </ul>
     </div>
 
-
     <div class="flex flex-wrap gap-3 justify-center mb-8">
       <button onclick="sortData('priceAsc')" class="px-3 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20">Price ↑</button>
       <button onclick="sortData('priceDesc')" class="px-3 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20">Price ↓</button>
@@ -60,7 +55,6 @@
       <button onclick="resetData()" class="px-3 py-2 bg-fuchsia-500/20 rounded-lg border border-fuchsia-400/30 hover:bg-fuchsia-500/30">Reset</button>
     </div>
 
-  
     <div id="cards" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"></div>
 
   </div>
@@ -120,7 +114,7 @@
           ${item.new ? `<span class="absolute top-3 right-3 bg-cyan-500 text-black text-xs font-bold px-2 py-1 rounded-full">NEW</span>` : ""}
           <div>
             <h3 class="text-xl font-bold">${item.name}</h3>
-            <p class="text-sm text-white/70 mt-2">Preis: ${item.price} $</p>
+            <p class="text-sm text-white/70 mt-2">Price: ${item.price} $</p>
           </div>
 
           <!-- Overlay -->
@@ -136,13 +130,12 @@
         container.appendChild(card);
       });
 
-      
       const reveals = document.querySelectorAll(".reveal");
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add("show");
-            observer.unobserve(entry.target); // Nur einmal animieren
+            observer.unobserve(entry.target);
           }
         });
       }, {threshold: 0.2});
@@ -167,3 +160,4 @@
   </script>
 </body>
 </html>
+
