@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Discord 4L's</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeInUp 1s ease forwards;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="bg-[#05060a] text-white min-h-screen flex flex-col items-center relative overflow-x-hidden">
+
+ 
+  <div class="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]">
+    <div class="absolute -top-40 -left-40 h-[40rem] w-[40rem] rounded-full bg-gradient-to-br from-teal-500/30 via-cyan-500/20 to-fuchsia-500/10 blur-3xl"></div>
+    <div class="absolute -bottom-48 -right-64 h-[44rem] w-[44rem] rounded-full bg-gradient-to-tr from-fuchsia-600/20 via-violet-500/20 to-sky-400/20 blur-3xl"></div>
+  </div>
+
+ 
+  <div class="relative z-10 w-full max-w-6xl px-4 py-10">
+
+ 
+    <header class="text-center mb-10 max-w-2xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-teal-300 drop-shadow-[0_0_20px_rgba(99,102,241,0.25)]">
+        Discord 4L's List
+      </h1>
+    </header>
+
+ 
+    <div class="mb-12 p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 shadow-[0_0_30px_rgba(34,211,238,0.15)] max-w-2xl mx-auto text-center fade-in">
+      <h2 class="text-xl font-semibold mb-4 text-cyan-300">Description:</h2>
+      <ul class="space-y-2 text-white/80 text-sm md:text-base">
+        <li>✨ All come on OGE</li>
+        <li>🧼 Fresh accounts, clean billing</li>
+        <li>🚀 OGO → YOU!</li>
+      </ul>
+    </div>
+
+
+    <div class="flex flex-wrap gap-3 justify-center mb-8">
+      <button onclick="sortData('priceAsc')" class="px-3 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20">Price ↑</button>
+      <button onclick="sortData('priceDesc')" class="px-3 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20">Price ↓</button>
+      <button onclick="sortData('az')" class="px-3 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20">A–Z</button>
+      <button onclick="sortData('za')" class="px-3 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20">Z–A</button>
+      <button onclick="resetData()" class="px-3 py-2 bg-fuchsia-500/20 rounded-lg border border-fuchsia-400/30 hover:bg-fuchsia-500/30">Reset</button>
+    </div>
+
+  
+    <div id="cards" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"></div>
+
+  </div>
+
+  <script>
+    let data = [
+      {name: "grwm", price: 400, new: true},
+      {name: "iwuc", price: 10},
+      {name: "iwih", price: 10},
+      {name: "cidt", price: 10},
+      {name: "dadr", price: 10},
+      {name: "jxuo", price: 10, new: true},
+      {name: "cnuo", price: 5},
+      {name: "cxns", price: 10},
+      {name: "aiqo", price: 7},
+      {name: "aolq", price: 5},
+      {name: "axwm", price: 5},
+      {name: "bhce", price: 5},
+      {name: "blzi", price: 5},
+      {name: "cejt", price: 5},
+      {name: "cjzi", price: 5},
+      {name: "ctrq", price: 10},
+      {name: "cvwz", price: 5},
+      {name: "cwsz", price: 5},
+      {name: "dney", price: 10},
+      {name: "dpuc", price: 10},
+      {name: "fbir", price: 15, new: true},
+      {name: "bhuo", price: 5},
+      {name: "dley", price: 5},
+      {name: "egcs", price: 10},
+      {name: "eipm", price: 5},
+      {name: "fudx", price: 10},
+      {name: "fuxp", price: 10},
+      {name: "fymo", price: 10},
+      {name: "fymk", price: 10},
+      {name: "hiyt", price: 15},
+      {name: "ietl", price: 5},
+      {name: "fxeu", price: 10},
+      {name: "ftuo", price: 5},
+      {name: "hfti", price: 5},
+      {name: "hzru", price: 5},
+      {name: "ikxt", price: 5},
+      {name: "ixgs", price: 10},
+      {name: "hvhp", price: 5},
+    ];
+
+    const originalData = [...data];
+    const container = document.getElementById("cards");
+
+    function renderCards() {
+      container.innerHTML = "";
+      data.forEach((item, i) => {
+        const card = document.createElement("div");
+        card.className = "relative group p-5 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-cyan-300/40 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.35),0_20px_60px_-15px_rgba(34,211,238,0.25)] transition-all duration-300 overflow-hidden reveal";
+
+        card.innerHTML = `
+          ${item.new ? `<span class="absolute top-3 right-3 bg-cyan-500 text-black text-xs font-bold px-2 py-1 rounded-full">NEW</span>` : ""}
+          <div>
+            <h3 class="text-xl font-bold">${item.name}</h3>
+            <p class="text-sm text-white/70 mt-2">Preis: ${item.price} $</p>
+          </div>
+
+          <!-- Overlay -->
+          <div class="absolute inset-0 hidden group-hover:flex items-center justify-center bg-black/60 backdrop-blur-md transition">
+            <a href="https://discord.com/users/463953200559685632" target="_blank" class="px-4 py-2 bg-cyan-500/80 hover:bg-cyan-400 text-black font-bold rounded-lg border border-cyan-300/60 shadow-[0_0_30px_rgba(34,211,238,0.5)] flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8L3 20l1.2-3.6A8.97 8.97 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </svg>
+              Contact on DC
+            </a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      
+      const reveals = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+            observer.unobserve(entry.target); // Nur einmal animieren
+          }
+        });
+      }, {threshold: 0.2});
+
+      reveals.forEach(el => observer.observe(el));
+    }
+
+    function sortData(type) {
+      if (type === "priceAsc") data.sort((a, b) => a.price - b.price);
+      if (type === "priceDesc") data.sort((a, b) => b.price - a.price);
+      if (type === "az") data.sort((a, b) => a.name.localeCompare(b.name));
+      if (type === "za") data.sort((a, b) => b.name.localeCompare(a.name));
+      renderCards();
+    }
+
+    function resetData() {
+      data = [...originalData];
+      renderCards();
+    }
+
+    renderCards();
+  </script>
+</body>
+</html>
