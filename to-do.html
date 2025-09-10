@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List with Priority</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html2canvas CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- vanillajs-datepicker CSS & JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+  <style>
+    .datepicker-dropdown { z-index: 9999 !important; }
+    .priority-badge {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      font-size: 0.7rem; font-weight: bold;
+      width: 1.5rem; height: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 9999px; pointer-events: none;
+    }
+    .theme-blue { --theme-from: #2563eb; --theme-to: #1e40af; }
+    .theme-green { --theme-from: #22c55e; --theme-to: #15803d; }
+    .theme-pink { --theme-from: #ec4899; --theme-to: #a21caf; }
+    .theme-dark { --theme-from: #334155; --theme-to: #0f172a; }
+    .theme-cyan { --theme-from: #06b6d4; --theme-to: #0e7490; }
+    .theme-gradient { background: linear-gradient(to bottom right, var(--theme-from), var(--theme-to)); }
+  </style>
+</head>
+<body id="body-bg" class="theme-gradient min-h-screen flex items-center justify-center transition-colors duration-300">
+  <!-- Top right controls -->
+  <div class="absolute top-4 right-4 flex gap-2 z-50">
+    <!-- Language Dropdown -->
+    <div class="relative">
+      <button id="lang-menu-btn" class="rounded-full border-2 border-white bg-white/10 hover:bg-white/20 w-10 h-10 flex items-center justify-center text-xl" title="Language">
+        🌐
+      </button>
+      <div id="lang-menu" class="hidden absolute right-0 mt-2 w-32 bg-white rounded shadow-lg py-1 z-50">
+        <button class="lang-option w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100" data-lang="en">🇬🇧 English</button>
+        <button class="lang-option w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100" data-lang="de">🇩🇪 Deutsch</button>
+      </div>
+    </div>
+    <!-- Theme Dropdown -->
+    <div class="relative">
+      <button id="theme-menu-btn" class="rounded-full border-2 border-white bg-white/10 hover:bg-white/20 w-10 h-10 flex items-center justify-center text-xl" title="Theme">
+        🎨
+      </button>
+      <div id="theme-menu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded shadow-lg py-2 z-50">
+        <button class="theme-option flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100" data-theme="blue">
+          <span class="inline-block w-5 h-5 rounded-full" style="background:linear-gradient(to bottom right,#2563eb,#1e40af);"></span> Blue
+        </button>
+        <button class="theme-option flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100" data-theme="green">
+          <span class="inline-block w-5 h-5 rounded-full" style="background:linear-gradient(to bottom right,#22c55e,#15803d);"></span> Green
+        </button>
+        <button class="theme-option flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100" data-theme="pink">
+          <span class="inline-block w-5 h-5 rounded-full" style="background:linear-gradient(to bottom right,#ec4899,#a21caf);"></span> Pink
+        </button>
+        <button class="theme-option flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100" data-theme="dark">
+          <span class="inline-block w-5 h-5 rounded-full" style="background:linear-gradient(to bottom right,#334155,#0f172a);"></span> Dark
+        </button>
+        <button class="theme-option flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100" data-theme="cyan">
+          <span class="inline-block w-5 h-5 rounded-full" style="background:linear-gradient(to bottom right,#06b6d4,#0e7490);"></span> Cyan
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="todo-container" class="theme-gradient shadow-2xl rounded-2xl p-4 sm:p-8 w-full max-w-md border border-gray-700 transition-colors duration-300">
+    <h1 id="main-title" class="text-4xl font-extrabold text-white mb-8 text-center tracking-tight drop-shadow-lg">📝 To-Do List</h1>
+    <form id="todo-form" class="flex flex-col gap-3 mb-8" autocomplete="off">
+      <input id="todo-input" type="text" placeholder="New task..." class="px-3 py-2 rounded-lg border border-gray-700 bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      <select id="priority" class="px-2 py-2 rounded-lg border border-gray-700 bg-gray-900 text-white focus:outline-none">
+        <option value="low">Low</option>
+        <option value="mid">Mid</option>
+        <option value="high">High</option>
+      </select>
+      <div class="flex flex-col items-center gap-2 w-full">
+        <input id="due-date" type="text" readonly placeholder="No date chosen" class="datepicker px-3 py-2 w-full rounded-lg border border-gray-700 bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-default" required>
+        <button type="button" id="date-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg flex items-center gap-1 w-full justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span id="choose-date-label">Choose date</span>
+        </button>
+      </div>
+      <button type="submit" id="add-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold shadow">+</button>
+    </form>
+    <ul id="todo-list" class="space-y-4"></ul>
+    <div class="mt-10 flex flex-col items-center">
+      <button id="download-btn" class="w-full bg-gradient-to-r from-blue-700 to-blue-500 text-white py-3 rounded-xl hover:from-blue-800 hover:to-blue-600 transition font-bold shadow-lg mb-2">Download as PNG</button>
+      <span id="watermark" class="text-xs text-gray-200 mt-2 select-none">geigi.net</span>
+    </div>
+  </div>
+
+  <!-- Export Overlay -->
+  <div id="export-overlay" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center">
+    <div id="export-card" class="theme-gradient rounded-2xl shadow-2xl p-6 w-full max-w-md relative flex flex-col items-center">
+      <button id="close-export" type="button" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+      <h2 id="export-title" class="text-2xl font-bold mb-4 text-center text-white drop-shadow">📝 To-Do List</h2>
+      <div id="color-pick" class="flex gap-2 mb-4">
+        <button type="button" class="preset-btn w-8 h-8 rounded-full border-2 border-white outline-none theme-blue" data-theme="blue"></button>
+        <button type="button" class="preset-btn w-8 h-8 rounded-full border-2 border-white outline-none theme-green" data-theme="green"></button>
+        <button type="button" class="preset-btn w-8 h-8 rounded-full border-2 border-white outline-none theme-pink" data-theme="pink"></button>
+        <button type="button" class="preset-btn w-8 h-8 rounded-full border-2 border-white outline-none theme-dark" data-theme="dark"></button>
+        <button type="button" class="preset-btn w-8 h-8 rounded-full border-2 border-white outline-none theme-cyan" data-theme="cyan"></button>
+      </div>
+      <ul id="export-list" class="space-y-4 w-full"></ul>
+      <span class="block text-xs text-gray-200 mt-8 text-center select-none">geigi.net/to-do</span>
+      <button id="save-png" type="button" class="mt-6 w-full bg-gradient-to-r from-blue-700 to-blue-500 text-white py-2 rounded-xl hover:from-blue-800 hover:to-blue-600 transition font-bold shadow-lg">Save PNG</button>
+    </div>
+  </div>
+
+  <script>
+    // Language and theme data
+    const LANGS = {
+      en: {
+        mainTitle: "📝 To-Do List",
+        newTask: "New task...",
+        chooseDate: "Choose date",
+        noDate: "No date chosen",
+        add: "+",
+        download: "Download as PNG",
+        save: "Save PNG",
+        noTasks: "No tasks",
+        low: "Low",
+        mid: "Mid",
+        high: "High",
+        daysLeft: n => n === 1 ? "1 day left" : `${n} days left`,
+        today: "Today",
+        overdue: "Overdue",
+        delete: "Delete"
+      },
+      de: {
+        mainTitle: "📝 Aufgabenliste",
+        newTask: "Neue Aufgabe...",
+        chooseDate: "Datum wählen",
+        noDate: "Kein Datum gewählt",
+        add: "+",
+        download: "Als PNG herunterladen",
+        save: "PNG speichern",
+        noTasks: "Keine Aufgaben",
+        low: "Niedrig",
+        mid: "Mittel",
+        high: "Hoch",
+        daysLeft: n => n === 1 ? "1 Tag verbleibend" : `${n} Tage verbleibend`,
+        today: "Heute",
+        overdue: "Überfällig",
+        delete: "Löschen"
+      }
+    };
+    const THEMES = {
+      blue:  ["#2563eb", "#1e40af"],
+      green: ["#22c55e", "#15803d"],
+      pink:  ["#ec4899", "#a21caf"],
+      dark:  ["#334155", "#0f172a"],
+      cyan:  ["#06b6d4", "#0e7490"]
+    };
+
+    let currentLang = "en";
+    let currentTheme = "blue";
+    let todos = [];
+
+    // Datepicker init
+    let datepicker;
+    document.addEventListener('DOMContentLoaded', function () {
+      const elem = document.getElementById('due-date');
+      datepicker = new Datepicker(elem, {
+        autohide: true,
+        format: 'dd.mm.yyyy',
+        language: currentLang
+      });
+      document.getElementById('date-btn').onclick = function() {
+        datepicker.show();
+      };
+      updateTexts();
+      applyTheme(currentTheme);
+    });
+
+    // Dropdown logic
+    function setupDropdown(btnId, menuId) {
+      const btn = document.getElementById(btnId);
+      const menu = document.getElementById(menuId);
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+        // Hide other dropdown if open
+        if (btnId === "lang-menu-btn") document.getElementById("theme-menu").classList.add("hidden");
+        if (btnId === "theme-menu-btn") document.getElementById("lang-menu").classList.add("hidden");
+      };
+      document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && e.target !== btn) menu.classList.add('hidden');
+      });
+    }
+    setupDropdown("lang-menu-btn", "lang-menu");
+    setupDropdown("theme-menu-btn", "theme-menu");
+
+    // Elements
+    const form = document.getElementById('todo-form');
+    const input = document.getElementById('todo-input');
+    const priority = document.getElementById('priority');
+    const dueDate = document.getElementById('due-date');
+    const list = document.getElementById('todo-list');
+    const downloadBtn = document.getElementById('download-btn');
+    const watermark = document.getElementById('watermark');
+    const exportOverlay = document.getElementById('export-overlay');
+    const exportCard = document.getElementById('export-card');
+    const exportList = document.getElementById('export-list');
+    const savePngBtn = document.getElementById('save-png');
+    const closeExportBtn = document.getElementById('close-export');
+    const colorPick = document.getElementById('color-pick');
+    const mainTitle = document.getElementById('main-title');
+    const exportTitle = document.getElementById('export-title');
+    const addBtn = document.getElementById('add-btn');
+    const chooseDateLabel = document.getElementById('choose-date-label');
+    const bodyBg = document.getElementById('body-bg');
+
+    // Priority badge text
+    function getPriorityText(p) {
+      return LANGS[currentLang][p];
+    }
+
+    function getPriorityColor(p) {
+      if (p === 'high') return 'bg-red-500 text-white';
+      if (p === 'mid') return 'bg-yellow-400 text-black';
+      return 'bg-green-400 text-black';
+    }
+
+    function getPriorityOrder(p) {
+      if (p === 'high') return 0;
+      if (p === 'mid') return 1;
+      return 2;
+    }
+
+    function parseDate(str) {
+      if (!str) return '';
+      const [d, m, y] = str.split('.');
+      return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    }
+
+    function daysLeft(dateStr) {
+      if (!dateStr) return '';
+      const iso = parseDate(dateStr);
+      const now = new Date();
+      const due = new Date(iso + "T23:59:59");
+      const diff = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+      if (diff > 1) return LANGS[currentLang].daysLeft(diff);
+      if (diff === 1) return LANGS[currentLang].daysLeft(1);
+      if (diff === 0) return LANGS[currentLang].today;
+      return `<span class="text-red-400 font-bold">${LANGS[currentLang].overdue}</span>`;
+    }
+
+    function renderTodos() {
+      todos.sort((a, b) => {
+        const prioDiff = getPriorityOrder(a.priority) - getPriorityOrder(b.priority);
+        if (prioDiff !== 0) return prioDiff;
+        return new Date(parseDate(a.due)) - new Date(parseDate(b.due));
+      });
+      list.innerHTML = '';
+      for (const todo of todos) {
+        const li = document.createElement('li');
+        li.className = `flex items-center justify-between rounded-xl shadow-lg px-4 py-3 border border-gray-700 bg-black/30`;
+        li.innerHTML = `
+          <div class="flex flex-col gap-2 flex-1">
+            <span class="flex items-center gap-2">
+              <span class="relative inline-block w-7 h-7">
+                <span class="absolute inset-0 rounded-full ${getPriorityColor(todo.priority)}"></span>
+                <span class="priority-badge">${getPriorityText(todo.priority).charAt(0)}</span>
+              </span>
+              <span class="font-semibold text-white text-lg break-all">${todo.text}</span>
+            </span>
+            <span class="text-xs text-gray-300 flex items-center gap-1">
+              <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              ${todo.due ? `<span>${todo.due}</span>` : ''}
+              <span class="ml-2">${daysLeft(todo.due)}</span>
+            </span>
+          </div>
+          <button class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold px-2" title="${LANGS[currentLang].delete}">&times;</button>
+        `;
+        li.querySelector('.delete-btn').onclick = () => {
+          todos = todos.filter(t => t !== todo);
+          renderTodos();
+        };
+        list.appendChild(li);
+      }
+    }
+
+    // Export-Card Rendering
+    function renderExportCard(hideColorPick = false) {
+      exportCard.className = `theme-gradient rounded-2xl shadow-2xl p-6 w-full max-w-md relative flex flex-col items-center`;
+      colorPick.style.display = hideColorPick ? "none" : "flex";
+      exportTitle.textContent = LANGS[currentLang].mainTitle;
+      exportList.innerHTML = '';
+      if (todos.length === 0) {
+        exportList.innerHTML = `<li class="text-center text-gray-300">${LANGS[currentLang].noTasks}</li>`;
+        return;
+      }
+      todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.className = `flex flex-col gap-1 rounded-xl shadow px-4 py-3 border border-gray-700 bg-black/30`;
+        li.innerHTML = `
+          <span class="flex items-center gap-2">
+            <span class="relative inline-block w-7 h-7">
+              <span class="absolute inset-0 rounded-full ${getPriorityColor(todo.priority)}"></span>
+              <span class="priority-badge">${getPriorityText(todo.priority).charAt(0)}</span>
+            </span>
+            <span class="font-semibold text-white text-lg break-all">${todo.text}</span>
+          </span>
+          <span class="text-xs text-gray-200 flex items-center gap-1 ml-5">
+            <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            ${todo.due ? `<span>${todo.due}</span>` : ''}
+            <span class="ml-2">${daysLeft(todo.due)}</span>
+          </span>
+        `;
+        exportList.appendChild(li);
+      });
+    }
+
+    form.onsubmit = e => {
+      e.preventDefault();
+      if (input.value.trim() && dueDate.value) {
+        todos.push({
+          text: input.value.trim(),
+          priority: priority.value,
+          due: dueDate.value
+        });
+        input.value = '';
+        dueDate.value = '';
+        input.focus();
+        renderTodos();
+      }
+    };
+
+    // Download as PNG: Neue Karte mit To-Dos, H1, Datum, geigi.net/to-do
+    downloadBtn.onclick = () => {
+      // Karte dynamisch erzeugen
+      const exportDiv = document.createElement('div');
+      exportDiv.style.width = "480px";
+      exportDiv.style.minHeight = "300px";
+      exportDiv.style.padding = "32px 24px 32px 24px";
+      exportDiv.style.borderRadius = "1.5rem";
+      exportDiv.style.background = getComputedStyle(document.getElementById('todo-container')).background;
+      exportDiv.style.boxShadow = "0 4px 32px #0007";
+      exportDiv.style.display = "flex";
+      exportDiv.style.flexDirection = "column";
+      exportDiv.style.alignItems = "center";
+      exportDiv.style.fontFamily = "'Inter', Arial, sans-serif";
+      exportDiv.style.color = "#eaf3ff";
+      exportDiv.style.position = "relative";
+
+      // Theme-abhängige Textfarbe für Prio-Titel
+      let prioTitleColor = "#fff";
+      const [from, to] = THEMES[currentTheme];
+      function isDark(hex) {
+        if (!hex) return true;
+        hex = hex.replace("#", "");
+        if (hex.length === 3) hex = hex.split("").map(x=>x+x).join("");
+        const r = parseInt(hex.substr(0,2),16);
+        const g = parseInt(hex.substr(2,2),16);
+        const b = parseInt(hex.substr(4,2),16);
+        return (r*0.299 + g*0.587 + b*0.114) < 160;
+      }
+      if (!isDark(from) && !isDark(to)) prioTitleColor = "#222";
+
+      // H1
+      const h1 = document.createElement('h1');
+      h1.textContent = "To-Do's:";
+      h1.style.fontSize = "2rem";
+      h1.style.fontWeight = "bold";
+      h1.style.marginBottom = "1.2em";
+      h1.style.textAlign = "center";
+      h1.style.color = "#fff";
+      h1.style.textShadow = "0 2px 8px #0005";
+      exportDiv.appendChild(h1);
+
+      // Gruppiere nach Priority
+      const priorities = [
+        { key: "high", label: LANGS[currentLang].high, color: "#ef4444" },
+        { key: "mid",  label: LANGS[currentLang].mid,  color: "#facc15" },
+        { key: "low",  label: LANGS[currentLang].low,  color: "#22c55e" }
+      ];
+
+      let hasAny = false;
+      priorities.forEach(prio => {
+        const filtered = todos.filter(t => t.priority === prio.key);
+        if (filtered.length === 0) return;
+        hasAny = true;
+
+        // Überschrift für die Prio
+        const prioTitle = document.createElement('div');
+        prioTitle.textContent = prio.label + " Priority:";
+        prioTitle.style.fontWeight = "bold";
+        prioTitle.style.fontSize = "1.1em";
+        prioTitle.style.color = prioTitleColor;
+        prioTitle.style.margin = "0.7em 0 0.5em 0";
+        prioTitle.style.alignSelf = "flex-start";
+        exportDiv.appendChild(prioTitle);
+
+        // Karten für die Tasks dieser Prio
+        const cardWidth = "100%";
+        const cardHeight = "auto";
+        filtered.forEach(todo => {
+          const card = document.createElement('div');
+          card.style.background = "rgba(16,26,43,0.93)";
+          card.style.borderRadius = "0.8em";
+          card.style.padding = "0.7em 1em";
+          card.style.marginBottom = "0.5em";
+          card.style.display = "flex";
+          card.style.alignItems = "center";
+          card.style.gap = "0.8em";
+          card.style.boxShadow = "0 2px 8px #0003";
+          card.style.border = `2px solid ${prio.color}`;
+          card.style.fontSize = "1em";
+          card.style.width = cardWidth;
+          card.style.minHeight = "70px";
+          card.style.boxSizing = "border-box";
+          // Prio-Kreis
+          const prioDot = document.createElement('span');
+          prioDot.style.display = "inline-flex";
+          prioDot.style.alignItems = "center";
+          prioDot.style.justifyContent = "center";
+          prioDot.style.width = "1.5em";
+          prioDot.style.height = "1.5em";
+          prioDot.style.borderRadius = "999px";
+          prioDot.style.background = prio.color;
+          prioDot.style.border = "2px solid #fff";
+          card.appendChild(prioDot);
+          // Text mit Zeilenumbruch nach 15 Zeichen
+          const txt = document.createElement('span');
+          txt.style.fontWeight = "600";
+          txt.style.color = "#fff";
+          txt.style.flex = "1";
+          txt.style.wordBreak = "break-word";
+          txt.style.whiteSpace = "pre-line";
+          txt.style.fontSize = "1em";
+          txt.textContent = todo.text.length > 15
+            ? todo.text.replace(new RegExp(`(.{15})`, 'g'), '$1\n')
+            : todo.text;
+          card.appendChild(txt);
+          // Datum
+          if (todo.due) {
+            const date = document.createElement('span');
+            date.textContent = todo.due;
+            date.style.fontSize = "0.95em";
+            date.style.color = "#a5b4fc";
+            date.style.marginLeft = "0.7em";
+            card.appendChild(date);
+          }
+          // Days left
+          const days = document.createElement('span');
+          days.innerHTML = daysLeft(todo.due);
+          days.style.fontSize = "0.95em";
+          days.style.color = "#facc15";
+          days.style.marginLeft = "0.7em";
+          card.appendChild(days);
+
+          exportDiv.appendChild(card);
+        });
+      });
+
+      if (!hasAny) {
+        const empty = document.createElement('div');
+        empty.textContent = LANGS[currentLang].noTasks;
+        empty.style.color = "#bfc9e0";
+        empty.style.fontSize = "1.1em";
+        empty.style.marginBottom = "1.5em";
+        exportDiv.appendChild(empty);
+      }
+
+      // geigi.net/to-do
+      const geigi = document.createElement('div');
+      geigi.textContent = "geigi.net/to-do";
+      geigi.style.fontSize = "0.95em";
+      geigi.style.color = "#bfc9e0";
+      geigi.style.marginTop = "1.7em";
+      geigi.style.letterSpacing = "0.5px";
+      geigi.style.textAlign = "center";
+      exportDiv.appendChild(geigi);
+
+      // Datum
+      const date = document.createElement('div');
+      const now = new Date();
+      date.textContent = now.toLocaleDateString() + " " + now.toLocaleTimeString().slice(0,5);
+      date.style.fontSize = "0.95em";
+      date.style.color = "#bfc9e0";
+      date.style.marginTop = "0.3em";
+      date.style.textAlign = "center";
+      exportDiv.appendChild(date);
+
+      // Unsichtbar anhängen, Screenshot, entfernen
+      exportDiv.style.position = "fixed";
+      exportDiv.style.left = "-9999px";
+      document.body.appendChild(exportDiv);
+      html2canvas(exportDiv, {backgroundColor: null}).then(canvas => {
+        document.body.removeChild(exportDiv);
+        const link = document.createElement('a');
+        link.download = 'todo-list.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    };
+
+    // PNG Save
+    savePngBtn.onclick = () => {
+      renderExportCard(true); // Hide color pick
+      savePngBtn.style.display = "none";
+      closeExportBtn.style.display = "none";
+      setTimeout(() => {
+        html2canvas(exportCard, {backgroundColor: null}).then(canvas => {
+          savePngBtn.style.display = "";
+          closeExportBtn.style.display = "";
+          renderExportCard(false); // Show color pick again
+          const link = document.createElement('a');
+          link.download = 'todo-list.png';
+          link.href = canvas.toDataURL();
+          link.click();
+          exportOverlay.classList.add('hidden');
+        });
+      }, 100);
+    };
+
+    // Close Overlay
+    closeExportBtn.onclick = () => {
+      exportOverlay.classList.add('hidden');
+    };
+
+    // Language Switch
+    document.querySelectorAll('.lang-option').forEach(btn => {
+      btn.onclick = () => {
+        currentLang = btn.getAttribute('data-lang');
+        updateTexts();
+        renderTodos();
+        document.getElementById('lang-menu').classList.add('hidden');
+      };
+    });
+
+    // Theme Switch
+    document.querySelectorAll('.theme-option').forEach(btn => {
+      btn.onclick = () => {
+        currentTheme = btn.getAttribute('data-theme');
+        applyTheme(currentTheme);
+        document.getElementById('theme-menu').classList.add('hidden');
+      };
+    });
+
+    function updateTexts() {
+      mainTitle.textContent = LANGS[currentLang].mainTitle;
+      input.placeholder = LANGS[currentLang].newTask;
+      chooseDateLabel.textContent = LANGS[currentLang].chooseDate;
+      dueDate.placeholder = LANGS[currentLang].noDate;
+      addBtn.textContent = LANGS[currentLang].add;
+      downloadBtn.textContent = LANGS[currentLang].download;
+      savePngBtn.textContent = LANGS[currentLang].save;
+      if (datepicker) datepicker.setOptions({language: currentLang});
+    }
+
+    function applyTheme(theme) {
+      const [from, to] = THEMES[theme];
+      // Main backgrounds
+      document.querySelectorAll('.theme-gradient,#todo-container,#export-card').forEach(el => {
+        el.style.background = `linear-gradient(to bottom right, ${from}, ${to})`;
+      });
+      // Body background
+      bodyBg.style.background = `linear-gradient(to bottom right, ${from}, ${to})`;
+      // Buttons: Set background per style, nicht per Tailwind-Klasse!
+      downloadBtn.style.background = `linear-gradient(to right, ${from}, ${to})`;
+      downloadBtn.style.color = "#fff";
+      downloadBtn.style.borderRadius = "0.75rem";
+      downloadBtn.style.fontWeight = "bold";
+      downloadBtn.style.boxShadow = "0 2px 12px #0003";
+      savePngBtn.style.background = `linear-gradient(to right, ${from}, ${to})`;
+      savePngBtn.style.color = "#fff";
+      savePngBtn.style.borderRadius = "0.75rem";
+      savePngBtn.style.fontWeight = "bold";
+      savePngBtn.style.boxShadow = "0 2px 12px #0003";
+      document.getElementById('date-btn').style.background = from;
+      document.getElementById('date-btn').style.color = "#fff";
+      addBtn.style.background = from;
+      addBtn.style.color = "#fff";
+    }
+  </script>
+</body>
+</html>
