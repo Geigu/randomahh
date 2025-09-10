@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>USD to Crypto Converter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-sky-950 via-slate-900 to-cyan-900 min-h-screen flex flex-col items-center justify-center px-2 py-8">
+
+  <div class="bg-slate-900/80 border border-cyan-700 rounded-2xl shadow-2xl p-8 w-full max-w-md flex flex-col items-center">
+    <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-4 text-center drop-shadow-lg select-none">USD → Crypto Converter</h1>
+    <div class="w-full mb-4">
+      <label for="usd" class="block text-blue-200 mb-1 font-semibold">Amount in USD</label>
+      <input type="number" id="usd" min="0" step="any" placeholder="Enter USD amount..." class="w-full bg-slate-800 text-white text-lg rounded-lg px-4 py-3 mb-2 outline-none border border-cyan-700 focus:border-cyan-400 transition" />
+    </div>
+    <div class="w-full mb-4">
+      <label for="crypto" class="block text-blue-200 mb-1 font-semibold">Select Cryptocurrency</label>
+      <select id="crypto" class="w-full bg-slate-800 text-cyan-200 rounded-lg px-3 py-2 border border-cyan-700 focus:border-cyan-400 transition">
+        <option value="bitcoin">Bitcoin (BTC)</option>
+        <option value="ethereum">Ethereum (ETH)</option>
+        <option value="solana">Solana (SOL)</option>
+        <option value="dogecoin">Dogecoin (DOGE)</option>
+        <option value="litecoin">Litecoin (LTC)</option>
+        <option value="tron">Tron (TRX)</option>
+        <option value="cardano">Cardano (ADA)</option>
+        <option value="ripple">Ripple (XRP)</option>
+        <option value="binancecoin">BNB (Binance Coin)</option>
+        <option value="usd-coin">USD Coin (USDC)</option>
+        <option value="tether">Tether (USDT)</option>
+        <option value="polkadot">Polkadot (DOT)</option>
+        <option value="avalanche-2">Avalanche (AVAX)</option>
+        <option value="chainlink">Chainlink (LINK)</option>
+      </select>
+    </div>
+    <button onclick="convert()" class="w-full bg-cyan-700 hover:bg-cyan-800 text-white font-semibold rounded-lg py-3 mb-4 transition text-lg">Convert</button>
+    <div id="result" class="w-full text-center text-xl font-bold text-cyan-300 min-h-[2.5em]"></div>
+    <div id="price" class="w-full text-center text-sm text-blue-200 opacity-80 mt-2"></div>
+    <div id="error" class="w-full text-center text-red-400 mt-2"></div>
+    <div class="w-full text-center text-xs text-blue-400 opacity-70 mt-6 select-none">
+      Powered by <a href="https://www.coingecko.com/en/api" target="_blank" class="underline hover:text-cyan-300">CoinGecko API</a>
+    </div>
+  </div>
+
+  <script>
+    async function convert() {
+      const usd = parseFloat(document.getElementById('usd').value);
+      const crypto = document.getElementById('crypto').value;
+      const resultDiv = document.getElementById('result');
+      const priceDiv = document.getElementById('price');
+      const errorDiv = document.getElementById('error');
+      resultDiv.textContent = "";
+      priceDiv.textContent = "";
+      errorDiv.textContent = "";
+
+      if (isNaN(usd) || usd <= 0) {
+        errorDiv.textContent = "Please enter a valid USD amount.";
+        return;
+      }
+
+      try {
+        // CoinGecko API (no key required)
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${crypto}&vs_currencies=usd`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data[crypto] || !data[crypto].usd) throw new Error("Price not found.");
+        const price = data[crypto].usd;
+        const amount = usd / price;
+        resultDiv.textContent = `${usd} USD ≈ ${amount.toLocaleString(undefined, {maximumFractionDigits: 8})} ${getSymbol(crypto)}`;
+        priceDiv.textContent = `1 ${getSymbol(crypto)} = $${price.toLocaleString(undefined, {maximumFractionDigits: 2})} USD`;
+      } catch (e) {
+        errorDiv.textContent = "Failed to fetch price. Try again later.";
+      }
+    }
+
+    function getSymbol(crypto) {
+      switch(crypto) {
+        case "bitcoin": return "BTC";
+        case "ethereum": return "ETH";
+        case "solana": return "SOL";
+        case "dogecoin": return "DOGE";
+        case "litecoin": return "LTC";
+        case "tron": return "TRX";
+        case "cardano": return "ADA";
+        case "ripple": return "XRP";
+        case "binancecoin": return "BNB";
+        case "usd-coin": return "USDC";
+        case "tether": return "USDT";
+        case "polkadot": return "DOT";
+        case "avalanche-2": return "AVAX";
+        case "chainlink": return "LINK";
+        default: return "";
+      }
+    }
+  </script>
+</body>
+</html>
