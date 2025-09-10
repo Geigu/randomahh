@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Generator</title>
+    <style>
+        body {
+            background: #101a2b;
+            color: #eaf3ff;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: linear-gradient(135deg, #1a2a4d 0%, #3b7bff 100%);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px #0007;
+            padding: 2em 2em 2em 2em;
+            max-width: 420px;
+            width: 100%;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 0.5em;
+            font-size: 1.6em;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .desc {
+            font-size: 1em;
+            margin-bottom: 1.2em;
+            color: #eaf3ff;
+            background: rgba(16,26,43,0.25);
+            border-radius: 10px;
+            padding: 0.7em 1em;
+            text-align: center;
+        }
+        .controls {
+            margin-bottom: 2em;
+        }
+        .select-group {
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-size: 1em;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.5em;
+            border-radius: 7px;
+            border: none;
+            margin-bottom: 1em;
+            font-size: 1em;
+            background: #162a4d;
+            color: #eaf3ff;
+            box-sizing: border-box;
+        }
+        textarea {
+            min-height: 60px;
+            resize: vertical;
+            margin-bottom: 0.5em;
+        }
+        .generate-btn, .download-btn, .copy-btn {
+            background: linear-gradient(90deg, #3b7bff 60%, #5e9cff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7em 1.4em;
+            font-size: 1.05em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #0003;
+            transition: background 0.18s, color 0.18s;
+            text-decoration: none;
+            width: 100%;
+            margin-bottom: 0.5em;
+        }
+        .download-btn {
+            background: linear-gradient(90deg, #5e9cff 60%, #3b7bff 100%);
+        }
+        .generate-btn:hover, .download-btn:hover, .copy-btn:hover {
+            background: linear-gradient(90deg, #5e9cff 60%, #3b7bff 100%);
+        }
+        #qrcode {
+            margin: 1.5em auto 0 auto;
+            display: flex;
+            justify-content: center;
+            background: #fff;
+            padding: 1em;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #0003;
+            width: fit-content;
+        }
+        .wifi-row {
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            margin-bottom: 1em;
+        }
+        .wifi-row label {
+            margin-bottom: 0;
+            flex: 1;
+        }
+        .wifi-row input[type="checkbox"] {
+            width: auto;
+            margin-bottom: 0;
+        }
+        .button-row {
+            display: flex;
+            gap: 0.7em;
+            margin-bottom: 1.2em;
+        }
+        .split-container {
+            margin-top: 1.5em;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 1em 0 0.7em 0;
+            color: #eaf3ff;
+            font-size: 1em;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Domain / List Generator</h1>
+        <div class="controls">
+            <select id="combination-type" style="margin-bottom:1em;">
+                <option value="4-letters">4 Letter Combinations</option>
+                <option value="3-letters">3 Letter Combinations</option>
+                <option value="3-chars">3 Character Combinations</option>
+                <option value="digits">Digits</option>
+            </select>
+            <input type="text" id="domain-ending" placeholder="Enter domain ending (e.g., .de)">
+            <input type="number" id="max-number" placeholder="Max number (for digits)">
+            <input type="number" id="split-size" placeholder="Split size (e.g., 500)">
+            <button onclick="generateCombinations()" class="generate-btn" style="margin-top:0.8em;margin-bottom:0.em;">Generate</button>
+        </div>
+        <textarea id="output" placeholder="Generated combinations will appear here..."></textarea>
+        <div class="button-row">
+            <button class="copy-btn" onclick="copyOutput()">Copy</button>
+            <button class="download-btn" onclick="downloadOutput()">Download as TXT</button>
+        </div>
+        <div id="split-container" class="split-container"></div>
+        <p style="color: #007bff;font-weight: bolder;font-family: Verdana, Geneva, Tahoma, sans-serif;margin-top: 50px; font-size: 20px;"></p>
+    </div>
+
+    <script>
+        // Make select as wide as other fields
+        document.getElementById('combination-type').style.width = "100%";
+
+        function generateCombinations() {
+            const type = document.getElementById('combination-type').value;
+            const ending = document.getElementById('domain-ending').value;
+            const maxNumber = parseInt(document.getElementById('max-number').value, 10);
+            const splitSize = parseInt(document.getElementById('split-size').value, 10);
+            let combinations = [];
+
+            if (type === '4-letters') {
+                combinations = generateLetterCombinations(4);
+            } else if (type === '3-letters') {
+                combinations = generateLetterCombinations(3);
+            } else if (type === '3-chars') {
+                combinations = generateCharCombinations(3);
+            } else if (type === 'digits') {
+                combinations = generateDigitCombinations(maxNumber);
+            }
+
+            if (ending) {
+                combinations = combinations.map(combination => combination + ending);
+            }
+
+            document.getElementById('output').value = combinations.join('\n');
+
+            if (splitSize && splitSize > 0) {
+                displaySplitSections(combinations, splitSize);
+            } else {
+                document.getElementById('split-container').innerHTML = '';
+            }
+        }
+
+        function generateLetterCombinations(length) {
+            const letters = 'abcdefghijklmnopqrstuvwxyz';
+            let combinations = [];
+
+            function generate(prefix, length) {
+                if (length === 0) {
+                    combinations.push(prefix);
+                    return;
+                }
+                for (let i = 0; i < letters.length; i++) {
+                    generate(prefix + letters[i], length - 1);
+                }
+            }
+
+            generate('', length);
+            return combinations;
+        }
+
+        function generateCharCombinations(length) {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let combinations = [];
+
+            function generate(prefix, length) {
+                if (length === 0) {
+                    combinations.push(prefix);
+                    return;
+                }
+                for (let i = 0; i < chars.length; i++) {
+                    generate(prefix + chars[i], length - 1);
+                }
+            }
+
+            generate('', length);
+            return combinations;
+        }
+
+        function generateDigitCombinations(maxNumber) {
+            let combinations = [];
+            for (let i = 0; i <= maxNumber; i++) {
+                combinations.push(i.toString().padStart(3, '0'));
+            }
+            return combinations;
+        }
+
+        function displaySplitSections(combinations, size) {
+            const splitContainer = document.getElementById('split-container');
+            splitContainer.innerHTML = '';
+
+            for (let i = 0; i < combinations.length; i += size) {
+                const section = document.createElement('div');
+                section.className = 'split-section';
+
+                const header = document.createElement('h3');
+                header.textContent = `Combinations ${i + 1} - ${Math.min(i + size, combinations.length)}`;
+                section.appendChild(header);
+
+                const textarea = document.createElement('textarea');
+                textarea.value = combinations.slice(i, i + size).join('\n');
+                textarea.rows = 10;
+                textarea.cols = 50;
+                section.appendChild(textarea);
+
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copy to Clipboard';
+                copyButton.className = 'copy-btn';
+                copyButton.onclick = () => {
+                    navigator.clipboard.writeText(textarea.value).then(() => {
+                        const old = copyButton.textContent;
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(() => { copyButton.textContent = old; }, 1200);
+                    });
+                };
+                section.appendChild(copyButton);
+
+                const downloadButton = document.createElement('button');
+                downloadButton.textContent = 'Download as TXT';
+                downloadButton.className = 'download-btn';
+                downloadButton.onclick = () => {
+                    const blob = new Blob([textarea.value], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `combinations_${i + 1}-${Math.min(i + size, combinations.length)}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+                section.appendChild(downloadButton);
+
+                const checkButton = document.createElement('input');
+                checkButton.type = 'checkbox';
+                checkButton.style.marginLeft = "1em";
+                checkButton.onchange = () => {
+                    if (checkButton.checked) {
+                        header.classList.add('checked');
+                    } else {
+                        header.classList.remove('checked');
+                    }
+                };
+                section.appendChild(checkButton);
+
+                splitContainer.appendChild(section);
+            }
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('output');
+            output.select();
+            document.execCommand('copy');
+            const btn = document.querySelector('.copy-btn');
+            const old = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = old; }, 1200);
+        }
+
+        function downloadOutput() {
+            const output = document.getElementById('output').value;
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'combinations.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
