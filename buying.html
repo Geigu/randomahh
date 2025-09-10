@@ -1,510 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buying Accounts - Geigi.net</title>
-     <link rel="icon" href="icon3 (1).png">
-    <style>
-        :root {
-            --bg-color: #1a0a0a;
-            --text-color: #ffeaea;
-            --accent-color: #ff3b3b;
-            --card-bg: #2a1313;
-            --hover-color: #ff5e5e;
-            --yellow: #ffd700;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .glow {
-            position: fixed;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 59, 59, 0.13) 0%, rgba(255, 59, 59, 0) 70%);
-            pointer-events: none;
-            z-index: -1;
-        }
-        .glow-1 {
-            top: 20%;
-            left: 10%;
-            animation: float-glow 8s ease-in-out infinite;
-        }
-        .glow-2 {
-            bottom: 15%;
-            right: 10%;
-            animation: float-glow 10s ease-in-out infinite 2s;
-        }
-        @keyframes float-glow {
-            0%, 100% { transform: translate(0, 0);}
-            25% { transform: translate(20px, 20px);}
-            50% { transform: translate(0, 40px);}
-            75% { transform: translate(-20px, 20px);}
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            background-color: rgba(26, 10, 10, 0.96);
-            backdrop-filter: blur(10px);
-            border-bottom: 1.5px solid var(--accent-color);
-        }
-        .home-btn {
-            color: var(--accent-color);
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            gap: 0.6em;
-        }
-        .home-btn:hover {
-            background-color: rgba(255, 59, 59, 0.1);
-            transform: translateY(-2px);
-        }
-        .nav-desktop {
-            display: flex;
-            gap: 1rem;
-        }
-        .nav-link {
-            color: var(--text-color);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-        .nav-link:hover, .nav-link.active {
-            background-color: rgba(255, 59, 59, 0.13);
-            color: var(--accent-color);
-        }
-        .nav-mobile {
-            display: none;
-        }
-        @media (max-width: 768px) {
-            .nav-desktop {
-                display: none;
-            }
-            .nav-mobile {
-                display: block;
-                position: relative;
-            }
-        }
-        .nav-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-        .mobile-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: var(--card-bg);
-            border: 1px solid var(--accent-color);
-            border-radius: 8px;
-            padding: 1rem;
-            display: none;
-            flex-direction: column;
-            gap: 0.5rem;
-            min-width: 150px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        .mobile-menu.show {
-            display: flex;
-        }
-        main {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 7rem 2rem 3rem;
-        }
-        .accounts-section {
-            background-color: var(--card-bg);
-            padding: 2rem;
-            border-radius: 16px;
-            margin: 0 auto 2rem auto;
-            box-shadow: 0 5px 15px rgba(255, 59, 59, 0.08);
-            border: 1px solid rgba(255, 59, 59, 0.13);
-            max-width: 600px;
-        }
-        .accounts-section h1 {
-            color: var(--accent-color);
-            font-size: 2rem;
-            margin-bottom: 0.7em;
-            text-align: center;
-        }
-        .accounts-section p {
-            color: #ffd7d7;
-            font-size: 1.1rem;
-            text-align: center;
-            margin-bottom: 2em;
-        }
-        .accounts-list {
-            display: flex;
-            gap: 2em;
-            justify-content: center;
-            margin-bottom: 1.5em;
-            flex-wrap: wrap;
-        }
-        .account-logo-btn {
-            background: var(--card-bg);
-            border: none;
-            border-radius: 16px;
-            padding: 1.2em 1.5em;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 12px #0005;
-            transition: background 0.2s, transform 0.2s;
-            min-width: 120px;
-            min-height: 120px;
-            position: relative;
-        }
-        .account-logo-btn:hover {
-            background: #2a1013;
-            transform: translateY(-4px) scale(1.04);
-        }
-        .account-logo-img {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 0.7em;
-            object-fit: contain;
-            background: #222;
-            border-radius: 12px;
-        }
-        .account-type-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5em;
-            margin-bottom: 0.2em;
-        }
-        .account-type-row span {
-            color: #fff;
-            font-weight: 600;
-            font-size: 1.08rem;
-        }
-        .account-card {
-            background: var(--bg-color);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px #0005;
-            padding: 1.5em 1.2em 1.2em 1.2em;
-            min-width: 220px;
-            max-width: 320px;
-            width: 100%;
-            margin: 1.5em auto 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1.5px solid var(--accent-color);
-            transition: transform 0.2s, box-shadow 0.2s;
-            animation: fadeIn 0.3s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-        @media (max-width: 900px) {
-            main {
-                padding: 6rem 1.5rem 2rem;
-            }
-            .accounts-section {
-                padding: 1.2rem 0.7rem 1.5rem 0.7rem;
-            }
-            .accounts-list {
-                flex-direction: column;
-                gap: 1.2em;
-                align-items: center;
-            }
-            .account-card {
-                max-width: 98vw;
-            }
-        }
-        .news-flash {
-            background: #ad3030;
-            color: #ffd7d7;
-            font-weight: bold;
-            font-size: 1.08rem;
-            border-radius: 10px;
-            padding: 0.9em 1.2em;
-            margin-bottom: 1.5em;
-            text-align: center;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 12px #0002;
-            display: flex;
-            gap: 2em;
-            justify-content: center;
-            align-items: center;
-            min-height: 2.2em;
-            overflow: hidden;
-            position: relative;
-        }
-        .news-flash span {
-            opacity: 0;
-            position: absolute;
-            left: 0; right: 0;
-            margin: auto;
-            transition: opacity 0.5s;
-        }
-        .news-flash span.active {
-            opacity: 1;
-            position: relative;
-        }
-        .account-card {
-            background: var(--bg-color);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px #0005;
-            padding: 1.5em 1.2em 1.2em 1.2em;
-            min-width: 220px;
-            max-width: 320px;
-            width: 100%;
-            margin: 1.5em auto 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1.5px solid var(--accent-color);
-            transition: transform 0.2s, box-shadow 0.2s;
-            animation: fadeIn 0.3s;
-        }
-        .account-desc {
-            text-align: center;
-        }
-        .contact-btn.darkred {
-            background: #800010;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 0.7em 1.5em;
-            font-size: 1.08rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 0.8em;
-            transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px #0003;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-        .contact-btn.darkred:hover {
-            background: #a3001a;
-        }
-        .social-card {
-            background: var(--card-bg);
-            color: var(--text-color);
-            border-radius: 8px;
-            padding: 0.5em 1em;
-            display: flex;
-            align-items: center;
-            gap: 0.7em;
-            font-size: 1rem;
-            box-shadow: 0 2px 8px #0003;
-            transition: background 0.18s, color 0.18s;
-            text-decoration: none;
-        }
-        .social-card:hover {
-            background: var(--accent-color);
-            color: #fff;
-        }
-        @media (max-width: 900px) {
-            .socials-desktop {
-                display: none !important;
-            }
-            .socials-mobile {
-                display: flex !important;
-            }
-        }
-        @media (min-width: 901px) {
-            .socials-mobile {
-                display: none !important;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buying Accounts - Geigi.net</title>
+  <link rel="icon" href="icon3 (1).png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #eaf3ff;
+      font-family: 'Inter', sans-serif;
+    }
+    .glow {
+      position: fixed;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,123,255,0.2) 0%, rgba(59,123,255,0) 70%);
+      pointer-events: none;
+      z-index: -1;
+      animation: float 10s ease-in-out infinite;
+    }
+    .glow-2 { animation-delay: 2s; }
+    @keyframes float {
+      0%,100% { transform: translate(0,0);}
+      25% { transform: translate(30px,20px);}
+      50% { transform: translate(0,40px);}
+      75% { transform: translate(-30px,20px);}
+    }
+    .social-card {
+      background: #162a4d;
+      color: #eaf3ff;
+      border-radius: 8px;
+      padding: 0.5em 1em;
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px #0003;
+      transition: background 0.18s, color 0.18s;
+      text-decoration: none;
+    }
+    .social-card:hover {
+      background: #3b7bff;
+      color: #fff;
+    }
+    @media (max-width: 900px) {
+      .socials-desktop { display: none !important; }
+      .socials-mobile { display: flex !important; }
+    }
+    @media (min-width: 901px) {
+      .socials-mobile { display: none !important; }
+    }
+    .nav-mobile { display: none; }
+    @media (max-width: 768px) {
+      .nav-desktop { display: none; }
+      .nav-mobile { display: block; position: relative; }
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #eaf3ff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    .mobile-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #162a4d;
+      border: 1px solid #3b7bff;
+      border-radius: 8px;
+      padding: 1rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 170px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      z-index: 100;
+    }
+    .mobile-menu.show { display: flex; }
+  </style>
 </head>
-<body>
-    <!-- Glow Effects -->
-    <div class="glow glow-1"></div>
-    <div class="glow glow-2"></div>
+<body class="bg-[#0a0a0a]">
 
-    <!-- Header -->
-    <header>
-        <div style="display:flex;align-items:center;">
-            <a href="index" class="home-btn" style="margin-right:0.7em;">
-                <img src="Image (54).jpg" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 1px 6px #0003;">
-                Home
-            </a>
-            <div class="sidebar-social socials-desktop" style="display:flex;gap:0.7em;align-items:center;">
-                <a class="social-card" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">
-                    <img src="discord.png" alt="Discord" style="width:24px;height:24px;object-fit:contain;">
-                    @geigi
-                </a>
-                <a class="social-card" href="https://oguser.com/geigi" target="_blank" rel="noopener noreferrer">
-                    <img src="Oguserslogo.png" alt="OGU" style="width:24px;height:24px;object-fit:contain;">
-                    /geigi
-                </a>
-            </div>
-        </div>
-        <nav class="nav-desktop">
-            <a href="buying" class="nav-link active">Buying Accounts</a>
-            <a href="2fa" class="nav-link">2FA Generator</a>
-            <a href="verify" class="nav-link">Verification</a>
-           
-            <a href="https://dcserver.dev/" class="nav-link" target="_blank">Discord Server Setups</a>
-        </nav>
-        <div class="nav-mobile">
-            <button class="nav-btn" onclick="toggleMobileMenu()">☰</button>
-            <div class="mobile-menu" id="mobileMenu">
-                <a href="buying" class="nav-link active">Buying Accounts</a>
-                <a href="2fa" class="nav-link">2FA Generator</a>
-                <a href="verify" class="nav-link">Verification</a>
-              
-                <a href="https://dcserver.dev/" class="nav-link" target="_blank">Discord Server Setups</a>
-                <div class="sidebar-social socials-mobile" style="display:flex;gap:0.7em;align-items:center;justify-content:center;margin-top:1em;">
-                    <a class="social-card" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">
-                        <img src="discord.png" alt="Discord" style="width:24px;height:24px;object-fit:contain;">
-                        @geigi
-                    </a>
-                    <a class="social-card" href="https://oguser.com/geigi" target="_blank" rel="noopener noreferrer">
-                        <img src="Oguserslogo.png" alt="OGU" style="width:24px;height:24px;object-fit:contain;">
-                        /geigi
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
+<div class="glow top-20 left-16"></div>
+<div class="glow glow-2 bottom-20 right-16"></div>
 
-    <!-- Main Content -->
-    <main>
-        <div class="accounts-section">
-            <h1>Buying Accounts</h1>
-            
-            <!-- News/Flashtext Bereich -->
-            <div class="news-flash" id="newsFlash">
-                <span>🔥 NEW: Looking for OG Emails! 🔥</span>
-                <span>🔥 Always buying 3L/3C! 🔥</span>
-                <span>🔥 Buying Minecon Capes! 🔥</span>
-                <span>🔥 Looking to buy OGU Credits! 🔥</span>
-            </div>
-            <p>
-                I buy accounts professionally and offer fair, competitive prices.<br>
-                Below you find the types of accounts I'm currently interested in. Click a card to see details!
-            </p>
-            <div class="accounts-list">
-                <button class="account-logo-btn" onclick="showAccountCard(0)">
-                    <img class="account-logo-img" src="public.png" alt="Minecraft">
-                    <div class="account-type-row">
-                        <span style="font-weight:bold; color:#fff;">Minecraft</span>
-                    </div>
-                </button>
-                <button class="account-logo-btn" onclick="showAccountCard(1)">
-                    <img class="account-logo-img" src="discord.png" alt="Discord">
-                    <div class="account-type-row">
-                        <span style="font-weight:bold; color:#fff;">Discord</span>
-                    </div>
-                </button>
-                <button class="account-logo-btn" onclick="showAccountCard(2)">
-                    <img class="account-logo-img" src="more-142.png" alt="Others">
-                    <div class="account-type-row">
-                        <span style="font-weight:bold; color:#fff;">Others</span>
-                    </div>
-                </button>
-            </div>
-            <div id="account-card-0" class="account-card" style="display:none;">
-                <img class="account-logo-img" src="public.png" alt="Minecraft">
-                <div class="account-type-row" style="justify-content:center;width:100%;">
-                    <span style="font-weight:bold; color:#fff;">Minecraft</span>
-                </div>
-                <div class="account-desc" style="text-align:center;">
-                  ✅ Currently buying quicksell:<br><br>
-                            Semis<br>
-                 3 chars<br>
-                3 Letters<br>
-                Repeaters<br>
-                 Minecons
-                </div>
-                <br>
-                <a class="contact-btn darkred" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer" style="margin:0 auto;">Contact Me!</a>
-            </div>
-            <div id="account-card-1" class="account-card" style="display:none;">
-                <img class="account-logo-img" src="discord.png" alt="Discord">
-                <div class="account-type-row" style="justify-content:center;width:100%;">
-                    <span style="font-weight:bold; color:#fff;">Discord</span>
-                </div>
-                <div class="account-desc" style="text-align:center;">
-                   ✅ Currently buying quicksell:<br><br>
-                   Semis<br>
-                3 chars<br>
-                   3 Letters<br>
-                   Repeaters<br>
-                   and OG's!
-                </div>
-                <br>
-                <a class="contact-btn darkred" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer" style="margin:0 auto;">Contact Me!</a>
-            </div>
-            <div id="account-card-2" class="account-card" style="display:none;">
-                <img class="account-logo-img" src="more-142.png" alt="Others">
-                <div class="account-type-row" style="justify-content:center;width:100%;">
-                    <span style="font-weight:bold; color:#fff;">Others</span>
-                </div>
-                <div class="account-desc" style="text-align:center;">
-                   ✅ Currently buying quicksell:<br> <br>
-                  Domains<br>
-                    OGUser.com Credits (0.85$/1K)<br>
-                    OG Email's<br>
-                    and others!
-                </div>
-                <br>
-                <a class="contact-btn darkred" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer" style="margin:0 auto;">Contact Me!</a>
-            </div>
+<!-- Navbar -->
+<header class="fixed top-0 left-0 right-0 bg-black/80 backdrop-blur-md border-b border-blue-600 z-50">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:justify-center md:items-center p-4">
+    <div class="flex w-full md:w-auto justify-between items-center">
+      <a href="/" class="text-blue-500 font-bold text-xl">Geigi.net</a>
+      <div class="md:hidden nav-mobile">
+        <button class="nav-btn" onclick="toggleMobileMenu()">☰</button>
+      </div>
+    </div>
+    <nav class="hidden md:flex space-x-6 nav-desktop mx-auto">
+      <a href="/" class="hover:text-blue-400 transition">Home</a>
+      <a href="projects.html" class="hover:text-blue-400 transition">Projects</a>
+      <a href="accounts.html" class="text-blue-500 font-semibold">Buying Accounts</a>
+      <a href="2fa.html" class="hover:text-blue-400 transition">2FA Generator</a>
+      <a href="verify.html" class="hover:text-blue-400 transition">Verification</a>
+      <a href="https://dcserver.dev/" target="_blank" class="hover:text-blue-400 transition">Discord Setups</a>
+    </nav>
+    <!-- Socials Desktop -->
+    <div class="sidebar-social socials-desktop md:ml-8 md:mr-2 mt-4 md:mt-0 justify-center md:justify-end w-full md:w-auto flex-row flex gap-3">
+      <a class="social-card" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">
+        <img src="discord.png" alt="Discord" style="width:24px;height:24px;object-fit:contain;">
+        @geigi
+      </a>
+      <a class="social-card" href="https://oguser.com/geigi" target="_blank" rel="noopener noreferrer">
+        <img src="Oguserslogo.png" alt="OGU" style="width:24px;height:24px;object-fit:contain;">
+        /geigi
+      </a>
+    </div>
+    <!-- Mobile Nav -->
+    <div class="nav-mobile">
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="/" class="hover:text-blue-400 transition">Home</a>
+        <a href="projects.html" class="hover:text-blue-400 transition">Projects</a>
+        <a href="accounts.html" class="text-blue-500 font-semibold">Buying Accounts</a>
+        <a href="2fa.html" class="hover:text-blue-400 transition">2FA Generator</a>
+        <a href="verify.html" class="hover:text-blue-400 transition">Verification</a>
+        <a href="https://dcserver.dev/" target="_blank" class="hover:text-blue-400 transition">Discord Setups</a>
+        <div class="sidebar-social socials-mobile flex-row flex gap-3" style="margin-top:1em;">
+          <a class="social-card" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">
+            <img src="discord.png" alt="Discord" style="width:24px;height:24px;object-fit:contain;">
+            @geigi
+          </a>
+          <a class="social-card" href="https://oguser.com/geigi" target="_blank" rel="noopener noreferrer">
+            <img src="Oguserslogo.png" alt="OGU" style="width:24px;height:24px;object-fit:contain;">
+            /geigi
+          </a>
         </div>
-    </main>
+      </div>
+    </div>
+  </div>
+</header>
 
-    <!-- Mobile Menu Script -->
-    <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('show');
-        }
-        function showAccountCard(idx) {
-            for (let i = 0; i < 3; i++) {
-                document.getElementById('account-card-' + i).style.display = (i === idx) ? 'flex' : 'none';
-            }
-        }
-        // Flashtext/News Animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const flashes = document.querySelectorAll('#newsFlash span');
-            let idx = 0;
-            if (flashes.length) {
-                flashes[0].classList.add('active');
-                setInterval(() => {
-                    flashes[idx].classList.remove('active');
-                    idx = (idx + 1) % flashes.length;
-                    flashes[idx].classList.add('active');
-                }, 2600);
-            }
-        });
-    </script>
+<main class="max-w-2xl mx-auto px-6 pt-32 pb-16">
+  <section class="flex flex-col items-center bg-[#162a4d]/60 backdrop-blur-lg rounded-3xl shadow-2xl border border-blue-600 p-8">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300 mb-2">Buying Accounts</h1>
+    <div id="newsFlash" class="text-blue-200 font-mono font-semibold text-lg mb-4 text-center min-h-[2.5rem]">
+      🔥 NEW: Looking for OG Emails! 🔥
+    </div>
+    <div class="text-gray-200 text-center text-base mb-6">
+      I buy accounts professionally and offer fair, competitive prices.<br>
+      Below you find the types of accounts I'm currently interested in. Click a card to see details!
+    </div>
+    <div class="flex flex-wrap gap-6 justify-center mb-4">
+      <button class="bg-[#101a2b] rounded-xl shadow-lg p-6 flex flex-col items-center hover:-translate-y-1 hover:shadow-xl transition min-w-[120px]" onclick="showAccountCard(0)">
+        <img class="w-12 h-12 mb-3 object-contain rounded-lg" src="public.png" alt="Minecraft">
+        <span class="font-bold text-blue-200">Minecraft</span>
+      </button>
+      <button class="bg-[#101a2b] rounded-xl shadow-lg p-6 flex flex-col items-center hover:-translate-y-1 hover:shadow-xl transition min-w-[120px]" onclick="showAccountCard(1)">
+        <img class="w-12 h-12 mb-3 object-contain rounded-lg" src="discord.png" alt="Discord">
+        <span class="font-bold text-blue-200">Discord</span>
+      </button>
+      <button class="bg-[#101a2b] rounded-xl shadow-lg p-6 flex flex-col items-center hover:-translate-y-1 hover:shadow-xl transition min-w-[120px]" onclick="showAccountCard(2)">
+        <img class="w-12 h-12 mb-3 object-contain rounded-lg" src="more-142.png" alt="Others">
+        <span class="font-bold text-blue-200">Others</span>
+      </button>
+    </div>
+    <div id="account-card-0" class="w-full bg-[#101a2b] rounded-xl shadow-lg border border-blue-600 p-6 mt-4 flex-col items-center text-center hidden">
+      <img class="w-12 h-12 mb-2 object-contain rounded-lg mx-auto" src="public.png" alt="Minecraft">
+      <span class="font-bold text-blue-200 text-lg">Minecraft</span>
+      <div class="text-gray-200 mt-2 mb-2">
+        ✅ Currently buying quicksell:<br><br>
+        Semis<br>
+        3 chars<br>
+        3 Letters<br>
+        Repeaters<br>
+        Minecons
+      </div>
+      <a class="bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg px-5 py-2 mt-2 inline-block transition" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">Contact Me!</a>
+    </div>
+    <div id="account-card-1" class="w-full bg-[#101a2b] rounded-xl shadow-lg border border-blue-600 p-6 mt-4 flex-col items-center text-center hidden">
+      <img class="w-12 h-12 mb-2 object-contain rounded-lg mx-auto" src="discord.png" alt="Discord">
+      <span class="font-bold text-blue-200 text-lg">Discord</span>
+      <div class="text-gray-200 mt-2 mb-2">
+        ✅ Currently buying quicksell:<br><br>
+        Semis<br>
+        3 chars<br>
+        3 Letters<br>
+        Repeaters<br>
+        and OG's!
+      </div>
+      <a class="bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg px-5 py-2 mt-2 inline-block transition" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">Contact Me!</a>
+    </div>
+    <div id="account-card-2" class="w-full bg-[#101a2b] rounded-xl shadow-lg border border-blue-600 p-6 mt-4 flex-col items-center text-center hidden">
+      <img class="w-12 h-12 mb-2 object-contain rounded-lg mx-auto" src="more-142.png" alt="Others">
+      <span class="font-bold text-blue-200 text-lg">Others</span>
+      <div class="text-gray-200 mt-2 mb-2">
+        ✅ Currently buying quicksell:<br><br>
+        Domains<br>
+        OGUser.com Credits (0.85$/1K)<br>
+        OG Email's<br>
+        and others!
+      </div>
+      <a class="bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg px-5 py-2 mt-2 inline-block transition" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">Contact Me!</a>
+    </div>
+  </section>
+</main>
+
+<script>
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    menu.classList.toggle('show');
+  }
+  function showAccountCard(idx) {
+    for (let i = 0; i < 3; i++) {
+      document.getElementById('account-card-' + i).classList.add('hidden');
+    }
+    document.getElementById('account-card-' + idx).classList.remove('hidden');
+  }
+  // Flashtext/News Animation (wie Splashtext)
+  const flashes = [
+    "🔥 NEW: Looking for OG Emails! 🔥",
+    "🔥 Always buying 3L/3C! 🔥",
+    "🔥 Buying Minecon Capes! 🔥",
+    "🔥 Looking to buy OGU Credits! 🔥"
+  ];
+  let flashIdx = 0;
+  function setNewsFlash() {
+    const el = document.getElementById('newsFlash');
+    el.textContent = flashes[flashIdx];
+    flashIdx = (flashIdx + 1) % flashes.length;
+  }
+  setNewsFlash();
+  setInterval(setNewsFlash, 2600);
+</script>
 </body>
 </html>
-
