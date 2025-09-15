@@ -52,26 +52,8 @@
       background: #3b7bff;
       color: #fff;
     }
-    @media (max-width: 900px) {
-      .socials-desktop { display: none !important; }
-      .socials-mobile { display: flex !important; }
-    }
-    @media (min-width: 901px) {
-      .socials-mobile { display: none !important; }
-    }
-    .nav-mobile { display: none; }
-    @media (max-width: 768px) {
-      .nav-desktop { display: none; }
-      .nav-mobile { display: block; position: relative; }
-    }
-    .nav-btn {
-      background: none;
-      border: none;
-      color: #eaf3ff;
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 0.5rem;
-    }
+
+    /* Mobile Menu Styling mit Animation */
     .mobile-menu {
       position: absolute;
       top: 100%;
@@ -80,14 +62,29 @@
       border: 1px solid #3b7bff;
       border-radius: 8px;
       padding: 1rem;
-      display: none;
+      display: flex;
       flex-direction: column;
       gap: 0.5rem;
       min-width: 170px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      z-index: 100;
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: all 0.25s ease;
     }
-    .mobile-menu.show { display: flex; }
+    .mobile-menu.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #eaf3ff;
+      font-size: 1.8rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
   </style>
 </head>
 <body class="bg-[#0a0a0a]">
@@ -97,34 +94,10 @@
 
 <!-- Navbar -->
 <header class="fixed top-0 left-0 right-0 bg-black/80 backdrop-blur-md border-b border-blue-600 z-50">
-  <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:justify-center md:items-center p-4">
-    <div class="flex w-full md:w-auto justify-between items-center">
-      <a href="/" class="text-blue-500 font-bold text-xl">Geigi.net</a>
-      <div class="md:hidden nav-mobile">
-        <button class="nav-btn" onclick="toggleMobileMenu()">☰</button>
-      </div>
-    </div>
-    <nav class="hidden md:flex space-x-6 nav-desktop mx-auto">
-      <a href="/" class="text-blue-500 font-semibold">Home</a>
-      <a href="projects" class="hover:text-blue-400 transition">Projects</a>
-      <a href="buying" class="hover:text-blue-400 transition">Buying Accounts</a>
-      <a href="2fa" class="hover:text-blue-400 transition">2FA Generator</a>
-      <a href="verify" class="hover:text-blue-400 transition">Verification</a>
-      <a href="https://dcserver.dev/" target="_blank" class="hover:text-blue-400 transition">Discord Setups</a>
-    </nav>
-    <!-- Socials Desktop -->
-    <div class="sidebar-social socials-desktop md:ml-8 md:mr-2 mt-4 md:mt-0 justify-center md:justify-end w-full md:w-auto flex-row flex gap-3">
-      <a class="social-card" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">
-        <img src="discord.png" alt="Discord" style="width:24px;height:24px;object-fit:contain;">
-        @geigi
-      </a>
-      <a class="social-card" href="https://oguser.com/geigi" target="_blank" rel="noopener noreferrer">
-        <img src="Oguserslogo.png" alt="OGU" style="width:24px;height:24px;object-fit:contain;">
-        /geigi
-      </a>
-    </div>
-    <!-- Mobile Nav -->
-    <div class="nav-mobile">
+  <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+    <a href="/" class="text-blue-500 font-bold text-xl">Geigi.net</a>
+    <div class="relative">
+      <button class="nav-btn" onclick="toggleMobileMenu()">☰</button>
       <div class="mobile-menu" id="mobileMenu">
         <a href="/" class="text-blue-500 font-semibold">Home</a>
         <a href="projects" class="hover:text-blue-400 transition">Projects</a>
@@ -132,7 +105,7 @@
         <a href="2fa" class="hover:text-blue-400 transition">2FA Generator</a>
         <a href="verify" class="hover:text-blue-400 transition">Verification</a>
         <a href="https://dcserver.dev/" target="_blank" class="hover:text-blue-400 transition">Discord Setups</a>
-        <div class="sidebar-social socials-mobile flex-row flex gap-3" style="margin-top:1em;">
+        <div class="sidebar-social flex-row flex gap-3 mt-3">
           <a class="social-card" href="https://discord.com/users/463953200559685632" target="_blank" rel="noopener noreferrer">
             <img src="discord.png" alt="Discord" style="width:24px;height:24px;object-fit:contain;">
             @geigi
@@ -193,7 +166,6 @@
     "Hedgehog Enthusiast 🦔"
   ];
 
-  // Splashtext Animation wie vorher
   function setSplashText() {
     const splashElement = document.getElementById('splashText');
     let idx = 0;
