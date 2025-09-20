@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fullscreen List Runner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <div class="flex-1 flex flex-col">
+    <div id="setup" class="p-6 flex-1 flex flex-col">
+      <h1 class="text-2xl font-semibold mb-3">Paste your list</h1>
+      <textarea id="pasteArea" rows="10" class="flex-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-200 p-3" placeholder="e.g. Alice\nBob\nCharlie"></textarea>
+      <button id="startBtn" class="mt-4 px-6 py-3 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-lg">Start</button>
+    </div>
+
+    <div id="viewer" class="hidden flex-1 bg-white">
+      <div class="flex flex-col items-center justify-center h-full p-6 text-center">
+        <div id="card" class="w-full max-w-xl bg-gray-50 rounded-2xl shadow-lg p-10">
+          <div id="cardText" class="text-2xl font-medium mb-6"></div>
+          <div class="flex flex-wrap gap-2 justify-center">
+            <button id="completeBtn" class="px-4 py-2 rounded bg-green-600 text-white">Complete</button>
+            <button id="brokenBtn" class="px-4 py-2 rounded bg-amber-500 text-white">Doesn't work</button>
+          </div>
+          <div class="mt-4 text-sm text-gray-500" id="countSummary"></div>
+          <div class="mt-4">
+            <button id="downloadBtn" class="px-4 py-2 rounded bg-indigo-600 text-white">Download .txt</button>
+            <button id="restartBtn" class="ml-2 px-4 py-2 rounded border">Restart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const pasteArea = document.getElementById('pasteArea');
+const startBtn = document.getElementById('startBtn');
+const viewer = document.getElementById('viewer');
+const setup = document.getElementById('setup');
+const cardText = document.getElementById('cardText');
+const completeBtn = document.getElementById('completeBtn');
+const brokenBtn = document.getElementById('brokenBtn');
+const countSummary = document.getElementById('countSummary');
+const downloadBtn = document.getElementById('downloadBtn');
+const restartBtn = document.getElementById('restartBtn');
+
+let items = [];
+let index = 0;
+let results = [];
+
+function renderCard(){
+  if(index >= items.length){
+    cardText.textContent = 'All items processed';
+    countSummary.textContent = `Done: ${results.length} / ${items.length}`;
+    completeBtn.disabled = true;
+    brokenBtn.disabled = true;
+    return;
+  }
+  const it = items[index];
+  cardText.textContent = it;
+  countSummary.textContent = `${results.length} / ${items.length}`;
+}
+
+startBtn.addEventListener('click', ()=>{
+  const lines = pasteArea.value.trim().split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if(lines.length===0){ alert('Please paste at least one line'); return; }
+  items = lines;
+  index = 0;
+  results = [];
+  setup.classList.add('hidden');
+  viewer.classList.remove('hidden');
+  completeBtn.disabled = false;
+  brokenBtn.disabled = false;
+  renderCard();
+});
+
+completeBtn.addEventListener('click', ()=>{
+  if(index < items.length){
+    results.push(`@${items[index]} / Done`);
+    index++;
+    renderCard();
+  }
+});
+
+brokenBtn.addEventListener('click', ()=>{
+  if(index < items.length){
+    results.push(`@${items[index]} / Doesn't work`);
+    index++;
+    renderCard();
+  }
+});
+
+downloadBtn.addEventListener('click', ()=>{
+  if(results.length === 0){
+    alert('No results to download yet.');
+    return;
+  }
+  const content = results.join("\n");
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'results.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+restartBtn.addEventListener('click', ()=>{
+  items=[]; index=0; results=[]; pasteArea.value='';
+  viewer.classList.add('hidden');
+  setup.classList.remove('hidden');
+});
+</script>
+</body>
+</html>
