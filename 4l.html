@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -25,23 +25,19 @@
 </head>
 <body class="bg-[#05060a] text-white min-h-screen flex flex-col items-center relative overflow-x-hidden">
 
- 
   <div class="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]">
     <div class="absolute -top-40 -left-40 h-[40rem] w-[40rem] rounded-full bg-gradient-to-br from-teal-500/30 via-cyan-500/20 to-fuchsia-500/10 blur-3xl"></div>
     <div class="absolute -bottom-48 -right-64 h-[44rem] w-[44rem] rounded-full bg-gradient-to-tr from-fuchsia-600/20 via-violet-500/20 to-sky-400/20 blur-3xl"></div>
   </div>
 
- 
   <div class="relative z-10 w-full max-w-6xl px-4 py-10">
 
- 
     <header class="text-center mb-10 max-w-2xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-teal-300 drop-shadow-[0_0_20px_rgba(99,102,241,0.25)]">
         Discord 4L's List
       </h1>
     </header>
 
- 
     <div class="mb-12 p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 shadow-[0_0_30px_rgba(34,211,238,0.15)] max-w-2xl mx-auto text-center fade-in">
       <h2 class="text-xl font-semibold mb-4 text-cyan-300">Description:</h2>
       <ul class="space-y-2 text-white/80 text-sm md:text-base">
@@ -51,7 +47,6 @@
       </ul>
     </div>
 
-
     <div class="flex flex-wrap gap-3 justify-center mb-8">
       <button onclick="sortData('priceAsc')" class="px-3 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20">Price ↑</button>
       <button onclick="sortData('priceDesc')" class="px-3 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20">Price ↓</button>
@@ -60,27 +55,66 @@
       <button onclick="resetData()" class="px-3 py-2 bg-fuchsia-500/20 rounded-lg border border-fuchsia-400/30 hover:bg-fuchsia-500/30">Reset</button>
     </div>
 
-  
     <div id="cards" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"></div>
 
   </div>
 
   <script>
     let data = [
-      {name: "grwm", price: 400, new: true},
+      {name: "grwm", price: 200, new: true},
       {name: "iwuc", price: 10},
       {name: "iwih", price: 10},
       {name: "cidt", price: 10},
-      {name: "dadr", price: 10},
+      {name: "cmxg", price: 10},
       {name: "jxuo", price: 10, new: true},
-      {name: "cnuo", price: 5},
+      {name: "cbyi", price: 10, new: true},
       {name: "cxns", price: 10},
-      {name: "aiqo", price: 7},
+      {name: "xbkg", price: 5},
+      {name: "xbuc", price: 5},
+      {name: "xsim", price: 10, new: true},
+      {name: "xrvu", price: 5, new: true},
+      {name: "xwsa", price: 5, new: true},
+      {name: "xbmh", price: 5},
+      {name: "xbqd", price: 5},
+      {name: "xdhs", price: 5},
+      {name: "xdjt", price: 5},
+      {name: "xdkp", price: 5},
+      {name: "xerh", price: 5},
+      {name: "xfca", price: 5},
+      {name: "xfgu", price: 5},
+      {name: "xfih", price: 5},
+      {name: "xgbh", price: 5},
+      {name: "xghz", price: 5},
+      {name: "xghk", price: 5},
+      {name: "xfge", price: 5},
+      {name: "xgsp", price: 5},
+      {name: "xgtj", price: 5},
+      {name: "xtuw", price: 5},
+      {name: "xugk", price: 5},
+      {name: "xwgb", price: 5},
+      {name: "xyfu", price: 5},
+      {name: "xytw", price: 5},
+      {name: "xpef", price: 5},
+      {name: "xphw", price: 5},
+      {name: "xpjh", price: 5},
+      {name: "xqbp", price: 5},
+      {name: "xqdv", price: 5},
+      {name: "xjgl", price: 5},
+      {name: "xjlm", price: 5},
+      {name: "xjsp", price: 5},
+      {name: "xjwg", price: 5},
+      {name: "xjyv", price: 5},
+      {name: "xkgu", price: 5},
+      {name: "xkth", price: 5},
+      {name: "xlnt", price: 5},
+      {name: "xnbd", price: 5},
+      {name: "xnhc", price: 5},
       {name: "aolq", price: 5},
       {name: "axwm", price: 5},
       {name: "bhce", price: 5},
       {name: "blzi", price: 5},
       {name: "cejt", price: 5},
+      {name: "cdck", price: 10, new: true},
       {name: "cjzi", price: 5},
       {name: "ctrq", price: 10},
       {name: "cvwz", price: 5},
@@ -91,6 +125,7 @@
       {name: "bhuo", price: 5},
       {name: "dley", price: 5},
       {name: "egcs", price: 10},
+      {name: "bhdg", price: 7, new: true},
       {name: "eipm", price: 5},
       {name: "fudx", price: 10},
       {name: "fuxp", price: 10},
@@ -101,10 +136,12 @@
       {name: "fxeu", price: 10},
       {name: "ftuo", price: 5},
       {name: "hfti", price: 5},
+      {name: "bqxh", price: 5, new: true},
+      {name: "cblt", price: 15, new: true},
       {name: "hzru", price: 5},
       {name: "ikxt", price: 5},
       {name: "ixgs", price: 10},
-      {name: "hvhp", price: 5},
+      {name: "hvhp", price: 5}
     ];
 
     const originalData = [...data];
@@ -120,7 +157,7 @@
           ${item.new ? `<span class="absolute top-3 right-3 bg-cyan-500 text-black text-xs font-bold px-2 py-1 rounded-full">NEW</span>` : ""}
           <div>
             <h3 class="text-xl font-bold">${item.name}</h3>
-            <p class="text-sm text-white/70 mt-2">Preis: ${item.price} $</p>
+            <p class="text-sm text-white/70 mt-2">Price: ${item.price} $</p>
           </div>
 
           <!-- Overlay -->
@@ -136,13 +173,12 @@
         container.appendChild(card);
       });
 
-      
       const reveals = document.querySelectorAll(".reveal");
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add("show");
-            observer.unobserve(entry.target); // Nur einmal animieren
+            observer.unobserve(entry.target);
           }
         });
       }, {threshold: 0.2});
