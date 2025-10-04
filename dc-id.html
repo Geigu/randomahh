@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discord ID Matcher</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { transition: background 0.3s, color 0.3s; }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+</style>
+</head>
+<body class="bg-black text-white font-sans min-h-screen flex flex-col items-center p-6">
+
+<div class="flex justify-end w-full max-w-3xl mb-6">
+  <select id="langSelect" class="px-2 py-1 rounded border border-gray-400 bg-gray-800 text-white">
+    <option value="en">English</option>
+    <option value="de">Deutsch</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+    <option value="it">Italiano</option>
+  </select>
+</div>
+
+<h1 id="title" class="text-3xl font-bold mb-6 text-center">Discord ID Matcher</h1>
+
+<div class="w-full max-w-md bg-gray-900 p-6 rounded-xl shadow-lg">
+  <label id="labelUser" class="block mb-1 font-semibold">User ID</label>
+  <input id="userId" type="number" class="w-full p-3 rounded mb-4 bg-gray-800 border border-gray-700 text-white" placeholder="Enter Discord User ID" oninput="this.value = this.value.replace(/\D/g,'')">
+
+  <label id="labelReceived" class="block mb-1 font-semibold">Received ID</label>
+  <input id="receivedId" type="number" class="w-full p-3 rounded mb-4 bg-gray-800 border border-gray-700 text-white" placeholder="Enter received Discord ID" oninput="this.value = this.value.replace(/\D/g,'')">
+
+  <button id="compareBtn" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded text-white font-bold transition-colors">Compare</button>
+
+  <div id="result" class="mt-4 text-center text-xl font-semibold"></div>
+
+  <div id="history" class="mt-4 text-sm text-gray-400"></div>
+</div>
+
+<div class="mt-6 max-w-md p-4">
+  <h2 class="font-bold text-xl mb-2 text-center" id="tutorialTitle">How to get a Discord ID</h2>
+  <ol id="tutorialSteps" class="list-decimal list-inside text-gray-200 bg-gray-800 p-4 rounded-xl shadow-lg">
+    <li>Open Discord Settings → Advanced → Enable Developer Mode.</li>
+    <li>Right-click on a user → Copy ID.</li>
+    <li>Paste the ID in the Received ID field above.</li>
+  </ol>
+</div>
+
+<div class="mt-6 max-w-md w-full">
+  <h2 class="font-bold text-xl mb-2 text-center" id="faqTitle">FAQ</h2>
+  <div id="faqContainer" class="bg-gray-800 rounded-xl shadow-lg">
+    <div class="faq-item border-t border-gray-700">
+      <button class="faq-question w-full text-left py-3 px-4 font-semibold focus:outline-none">Why use this page?</button>
+      <div class="faq-answer hidden text-gray-300 px-4 pb-4">
+        Quickly verify if a copied Discord ID matches the expected user without sharing sensitive info.
+      </div>
+    </div>
+    <div class="faq-item border-t border-gray-700">
+      <button class="faq-question w-full text-left py-3 px-4 font-semibold focus:outline-none">Is it safe?</button>
+      <div class="faq-answer hidden text-gray-300 px-4 pb-4">
+        Yes! Everything is client-side, no backend, no login required.
+      </div>
+    </div>
+    <div class="faq-item border-t border-gray-700">
+      <button class="faq-question w-full text-left py-3 px-4 font-semibold focus:outline-none">Who can use it?</button>
+      <div class="faq-answer hidden text-gray-300 px-4 pb-4">
+        Anyone who wants to quickly check Discord IDs, useful for trading, community management, or verification.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="mt-auto py-4 text-gray-500 text-sm">
+  <a href="https://geigi.net" class="underline hover:text-white">geigi.net</a> - Not affiliated with Discord Inc.
+</footer>
+
+<script>
+const texts = {
+  en: {
+    title: "Discord ID Matcher",
+    labelUser: "User ID",
+    labelReceived: "Received ID",
+    compareBtn: "Compare",
+    tutorialTitle: "How to get a Discord ID",
+    faq: [
+      {q: "Why use this page?", a: "Quickly verify if a copied Discord ID matches the expected user without sharing sensitive info."},
+      {q: "Is it safe?", a: "Yes! Everything is client-side, no backend, no login required."},
+      {q: "Who can use it?", a: "Anyone who wants to quickly check Discord IDs, useful for trading, community management, or verification."}
+    ]
+  },
+  de: {
+    title: "Discord ID Vergleich",
+    labelUser: "User ID",
+    labelReceived: "Erhaltene ID",
+    compareBtn: "Vergleichen",
+    tutorialTitle: "So erhältst du eine Discord ID",
+    faq: [
+      {q: "Warum diese Seite nutzen?", a: "Schnell überprüfen, ob eine kopierte Discord-ID mit dem erwarteten Benutzer übereinstimmt, ohne sensible Daten zu teilen."},
+      {q: "Ist es sicher?", a: "Ja! Alles läuft client-side, kein Backend, kein Login erforderlich."},
+      {q: "Wer kann es nutzen?", a: "Jeder, der schnell Discord-IDs prüfen möchte, nützlich für Handel, Community-Management oder Verifizierung."}
+    ]
+  },
+  es: {
+    title: "Comprobador de ID de Discord",
+    labelUser: "ID del Usuario",
+    labelReceived: "ID Recibida",
+    compareBtn: "Comparar",
+    tutorialTitle: "Cómo obtener un ID de Discord",
+    faq: [
+      {q: "¿Por qué usar esta página?", a: "Verifica rápidamente si un ID de Discord copiado coincide con el usuario esperado sin compartir información sensible."},
+      {q: "¿Es seguro?", a: "¡Sí! Todo funciona en el cliente, sin backend, sin login."},
+      {q: "¿Quién puede usarlo?", a: "Cualquiera que quiera verificar IDs de Discord rápidamente, útil para comercio, gestión de comunidad o verificación."}
+    ]
+  },
+  fr: {
+    title: "Vérificateur d'ID Discord",
+    labelUser: "ID de l'utilisateur",
+    labelReceived: "ID Reçue",
+    compareBtn: "Comparer",
+    tutorialTitle: "Comment obtenir un ID Discord",
+    faq: [
+      {q: "Pourquoi utiliser cette page ?", a: "Vérifiez rapidement si un ID Discord copié correspond à l'utilisateur attendu sans partager d'informations sensibles."},
+      {q: "Est-ce sûr ?", a: "Oui ! Tout fonctionne côté client, pas de backend, pas de login requis."},
+      {q: "Qui peut l'utiliser ?", a: "Toute personne souhaitant vérifier rapidement des IDs Discord, utile pour le trading, la gestion de communauté ou la vérification."}
+    ]
+  },
+  it: {
+    title: "Controllo ID Discord",
+    labelUser: "ID Utente",
+    labelReceived: "ID Ricevuta",
+    compareBtn: "Confronta",
+    tutorialTitle: "Come ottenere un ID Discord",
+    faq: [
+      {q: "Perché usare questa pagina?", a: "Verifica rapidamente se un ID Discord copiato corrisponde all'utente previsto senza condividere informazioni sensibili."},
+      {q: "È sicuro?", a: "Sì! Tutto funziona client-side, nessun backend, nessun login richiesto."},
+      {q: "Chi può usarlo?", a: "Chiunque voglia verificare rapidamente gli ID Discord, utile per trading, gestione della community o verifica."}
+    ]
+  }
+};
+
+const langSelect = document.getElementById('langSelect');
+const updateLanguage = () => {
+  const lang = langSelect.value;
+  const t = texts[lang];
+  document.getElementById('title').textContent = t.title;
+  document.getElementById('labelUser').textContent = t.labelUser;
+  document.getElementById('labelReceived').textContent = t.labelReceived;
+  document.getElementById('compareBtn').textContent = t.compareBtn;
+  document.getElementById('tutorialTitle').textContent = t.tutorialTitle;
+
+  const faqContainer = document.getElementById('faqContainer');
+  faqContainer.innerHTML = '';
+  t.faq.forEach(f => {
+    const item = document.createElement('div');
+    item.className = 'faq-item border-t border-gray-700';
+    item.innerHTML = `<button class="faq-question w-full text-left py-3 px-4 font-semibold focus:outline-none">${f.q}</button>
+                      <div class="faq-answer hidden text-gray-300 px-4 pb-4">${f.a}</div>`;
+    faqContainer.appendChild(item);
+  });
+
+  // FAQ dropdown
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.faq-answer').forEach(ans => {
+        if(ans !== btn.nextElementSibling) ans.classList.add('hidden');
+      });
+      btn.nextElementSibling.classList.toggle('hidden');
+    });
+  });
+};
+langSelect.addEventListener('change', updateLanguage);
+updateLanguage();
+
+// Matching logic
+const compareBtn = document.getElementById('compareBtn');
+const resultDiv = document.getElementById('result');
+const historyDiv = document.getElementById('history');
+let history = [];
+
+compareBtn.addEventListener('click', () => {
+  const userId = document.getElementById('userId').value.trim();
+  const receivedId = document.getElementById('receivedId').value.trim();
+
+  if(!userId || !receivedId){
+    resultDiv.textContent = langSelect.value==='en' ? "Please enter both IDs!" : "Bitte beide IDs eingeben!";
+    resultDiv.className = "mt-4 text-center text-xl font-semibold text-red-500";
+    return;
+  }
+
+  if(userId === receivedId){
+    resultDiv.textContent = "✅ IDs match!";
+    resultDiv.className = "mt-4 text-center text-xl font-semibold text-green-500";
+  } else {
+    resultDiv.textContent = "❌ IDs do NOT match!";
+    resultDiv.className = "mt-4 text-center text-xl font-semibold text-red-500";
+  }
+
+  history.push({userId, receivedId, match: userId===receivedId});
+  renderHistory();
+});
+
+function renderHistory(){
+  historyDiv.innerHTML = "<strong>History:</strong><br>" + history.slice(-5).reverse().map(h => 
+    `${h.userId} → ${h.receivedId} : ${h.match ? "✅ Match" : "❌ No match"}`
+  ).join("<br>");
+}
+</script>
+</body>
+</html>
