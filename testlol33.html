@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Code Extractor</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    textarea { width: 100%; height: 150px; margin-bottom: 10px; }
+    input { width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; }
+    button { padding: 10px 20px; font-size: 16px; }
+</style>
+</head>
+<body>
+
+<h2>Code Extractor für Copper Cape</h2>
+
+<textarea id="inputText" placeholder="Hier Text einfügen..."></textarea>
+<button onclick="extractCode()">Code kopieren</button>
+<input type="text" id="outputCode" readonly placeholder="Hier erscheint der Code">
+
+<script>
+function extractCode() {
+    const text = document.getElementById("inputText").value;
+
+    // Regex: alles nach "Copper Cape erhalten! Klicke hier, um deinen Code einzulösen: "
+    // bis zum nächsten Punkt und im Format XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
+    const regex = /Copper Cape erhalten! Klicke hier, um deinen Code einzulösen:\s*([A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5})\./;
+
+    const match = text.match(regex);
+
+    if(match && match[1]) {
+        const code = match[1];
+        const output = document.getElementById("outputCode");
+        output.value = code;
+
+        // Code in die Zwischenablage kopieren
+        navigator.clipboard.writeText(code).then(() => {
+            alert("Code kopiert: " + code);
+        }).catch(err => {
+            alert("Fehler beim Kopieren: " + err);
+        });
+    } else {
+        alert("Kein gültiger Code gefunden!");
+    }
+}
+</script>
+
+</body>
+</html>
